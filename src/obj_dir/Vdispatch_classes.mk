@@ -2,7 +2,7 @@
 # DESCRIPTION: Verilator output: Make include file with class lists
 #
 # This file lists generated Verilated files, for including in higher level makefiles.
-# See Vdecode.mk for the caller.
+# See Vdispatch.mk for the caller.
 
 ### Switches...
 # C11 constructs required?  0/1 (always on now)
@@ -23,28 +23,25 @@ VM_TRACE_FST = 0
 ### Object file lists...
 # Generated module classes, fast-path, compile with highest optimization
 VM_CLASSES_FAST += \
-	Vdecode \
-	Vdecode___024root__DepSet_h122b8a30__0 \
-	Vdecode___024root__DepSet_h5393bc99__0 \
+	Vdispatch \
+	Vdispatch___024root__DepSet_h583f5742__0 \
+	Vdispatch___024root__DepSet_hfb99fa3e__0 \
 
 # Generated module classes, non-fast-path, compile with low/medium optimization
 VM_CLASSES_SLOW += \
-	Vdecode__ConstPool_0 \
-	Vdecode___024root__Slow \
-	Vdecode___024root__DepSet_h122b8a30__0__Slow \
-	Vdecode___024root__DepSet_h5393bc99__0__Slow \
-	Vdecode___024unit__Slow \
-	Vdecode___024unit__DepSet_he00a2bb8__0__Slow \
+	Vdispatch___024root__Slow \
+	Vdispatch___024root__DepSet_h583f5742__0__Slow \
+	Vdispatch___024root__DepSet_hfb99fa3e__0__Slow \
 
 # Generated support classes, fast-path, compile with highest optimization
 VM_SUPPORT_FAST += \
-	Vdecode__Trace__0 \
+	Vdispatch__Trace__0 \
 
 # Generated support classes, non-fast-path, compile with low/medium optimization
 VM_SUPPORT_SLOW += \
-	Vdecode__Syms \
-	Vdecode__Trace__0__Slow \
-	Vdecode__TraceDecls__0__Slow \
+	Vdispatch__Syms \
+	Vdispatch__Trace__0__Slow \
+	Vdispatch__TraceDecls__0__Slow \
 
 # Global classes, need linked once per executable, fast-path, compile with highest optimization
 VM_GLOBAL_FAST += \

@@ -44,7 +44,7 @@ VL_ATTR_COLD void Vdecode___024root___eval_settle(Vdecode___024root* vlSelf) {
 #ifdef VL_DEBUG
             Vdecode___024root___dump_triggers__stl(vlSelf);
 #endif
-            VL_FATAL_MT("decode.v", 3, "", "Settle region did not converge.");
+            VL_FATAL_MT("decode.sv", 3, "", "Settle region did not converge.");
         }
         __VstlIterCount = ((IData)(1U) + __VstlIterCount);
         __VstlContinue = 0U;
@@ -79,8 +79,6 @@ VL_ATTR_COLD void Vdecode___024root___eval_stl(Vdecode___024root* vlSelf) {
     // Body
     if ((1ULL & vlSelf->__VstlTriggered.word(0U))) {
         Vdecode___024root___ico_sequent__TOP__0(vlSelf);
-        vlSelf->__Vm_traceActivity[1U] = 1U;
-        vlSelf->__Vm_traceActivity[0U] = 1U;
     }
 }
 
@@ -147,28 +145,17 @@ VL_ATTR_COLD void Vdecode___024root___ctor_var_reset(Vdecode___024root* vlSelf) 
     // Body
     vlSelf->clk = VL_RAND_RESET_I(1);
     vlSelf->rst = VL_RAND_RESET_I(1);
-    VL_RAND_RESET_W(128, vlSelf->instrs_in);
-    vlSelf->decode__DOT__genblk1__BRA__1__KET____DOT__decoded_op = VL_RAND_RESET_I(6);
-    vlSelf->decode__DOT__genblk1__BRA__1__KET____DOT__instr_type = VL_RAND_RESET_I(4);
-    vlSelf->decode__DOT__genblk1__BRA__1__KET____DOT__instr_type_immediate = VL_RAND_RESET_I(3);
-    vlSelf->decode__DOT__genblk1__BRA__1__KET____DOT__wr_reg = VL_RAND_RESET_I(1);
-    vlSelf->decode__DOT__genblk1__BRA__2__KET____DOT__decoded_op = VL_RAND_RESET_I(6);
-    vlSelf->decode__DOT__genblk1__BRA__2__KET____DOT__instr_type = VL_RAND_RESET_I(4);
-    vlSelf->decode__DOT__genblk1__BRA__2__KET____DOT__instr_type_immediate = VL_RAND_RESET_I(3);
-    vlSelf->decode__DOT__genblk1__BRA__2__KET____DOT__wr_reg = VL_RAND_RESET_I(1);
-    vlSelf->decode__DOT__genblk1__BRA__3__KET____DOT__decoded_op = VL_RAND_RESET_I(6);
-    vlSelf->decode__DOT__genblk1__BRA__3__KET____DOT__instr_type = VL_RAND_RESET_I(4);
-    vlSelf->decode__DOT__genblk1__BRA__3__KET____DOT__instr_type_immediate = VL_RAND_RESET_I(3);
-    vlSelf->decode__DOT__genblk1__BRA__3__KET____DOT__wr_reg = VL_RAND_RESET_I(1);
-    vlSelf->decode__DOT__genblk1__BRA__4__KET____DOT__decoded_op = VL_RAND_RESET_I(6);
-    vlSelf->decode__DOT__genblk1__BRA__4__KET____DOT__instr_type = VL_RAND_RESET_I(4);
-    vlSelf->decode__DOT__genblk1__BRA__4__KET____DOT__instr_type_immediate = VL_RAND_RESET_I(3);
-    vlSelf->decode__DOT__genblk1__BRA__4__KET____DOT__wr_reg = VL_RAND_RESET_I(1);
-    vlSelf->decode__DOT____VdfgExtracted_h5d8d65ee__0 = VL_RAND_RESET_I(32);
-    vlSelf->decode__DOT____VdfgExtracted_h471e2ee8__0 = VL_RAND_RESET_I(32);
-    vlSelf->decode__DOT____VdfgExtracted_h7de9e626__0 = VL_RAND_RESET_I(32);
-    vlSelf->decode__DOT____VdfgExtracted_hbc33c744__0 = VL_RAND_RESET_I(32);
-    for (int __Vi0 = 0; __Vi0 < 2; ++__Vi0) {
-        vlSelf->__Vm_traceActivity[__Vi0] = 0;
-    }
+    vlSelf->instr = VL_RAND_RESET_I(32);
+    vlSelf->decoded_op = VL_RAND_RESET_I(6);
+    vlSelf->instr_type = VL_RAND_RESET_I(4);
+    vlSelf->instr_type_immediate = VL_RAND_RESET_I(3);
+    vlSelf->imm_val = VL_RAND_RESET_I(32);
+    vlSelf->rs1 = VL_RAND_RESET_I(5);
+    vlSelf->rs2 = VL_RAND_RESET_I(5);
+    vlSelf->rd = VL_RAND_RESET_I(5);
+    vlSelf->is_br = VL_RAND_RESET_I(1);
+    vlSelf->is_jmp = VL_RAND_RESET_I(1);
+    vlSelf->rd_mem = VL_RAND_RESET_I(1);
+    vlSelf->wr_mem = VL_RAND_RESET_I(1);
+    vlSelf->wr_reg = VL_RAND_RESET_I(1);
 }

@@ -2,48 +2,55 @@
 `define DEFINE_H
 
 
-// General RISCV Stuff
+// General RISCV32 Stuff
 `define DBITS   32
 `define INSTBITS  32
+
+
+
+
 
 `define FETCH_WIDTH 4
 
 // Decode and Dispatch
 `define DISPATCH_WIDTH 4
-    `define ADD_I    1 
-    `define SUB_I    2 
-    `define AND_I    3
-    `define OR_I     4 
-    `define XOR_I    5
-    `define SLT_I    6
-    `define SLTU_I   7
-    `define SRA_I    8
-    `define SRL_I    9
-    `define SLL_I    10
-    `define MUL_I    11
-    `define ADDI_I   12 
-    `define ANDI_I   13
-    `define ORI_I    14
-    `define XORI_I   15
-    `define SLTI_I   16
-    `define SLTIU_I  17
-    `define SRAI_I   18
-    `define SRLI_I   19
-    `define SLLI_I   20
-    `define LUI_I    21
-    `define AUIPC_I  22
-    `define LW_I     23
-    `define SW_I     24
-    `define JAL_I    25
-    `define JR_I     26
-    `define JALR_I   27
-    `define BEQ_I    28
-    `define BNE_I    29
-    `define BLT_I    30
-    `define BGE_I    31
-    `define BLTU_I   32
-    `define BGEU_I   33
-    `define INVALID_I 34
+
+typedef enum logic[5:0] {  
+    ADD_I = 6'b0,     
+    SUB_I,     
+    AND_I,    
+    OR_I,      
+    XOR_I,    
+    SLT_I,    
+    SLTU_I,   
+    SRA_I,    
+    SRL_I,    
+    SLL_I,    
+    MUL_I,    
+    ADDI_I,    
+    ANDI_I,   
+    ORI_I,    
+    XORI_I,   
+    SLTI_I,   
+    SLTIU_I,  
+    SRAI_I,   
+    SRLI_I,   
+    SLLI_I,   
+    LUI_I,    
+    AUIPC_I,  
+    LW_I,     
+    SW_I,     
+    JAL_I,    
+    JR_I,     
+    JALR_I,   
+    BEQ_I,    
+    BNE_I,    
+    BLT_I,    
+    BGE_I,    
+    BLTU_I,   
+    BGEU_I,   
+    INVALID_I
+} instr_op_t;
 
 `define ADD_OPCODE 7'b0110011
   `define ADD_FUNCT3 3'b000

@@ -12,7 +12,19 @@ Vdecode::Vdecode(VerilatedContext* _vcontextp__, const char* _vcname__)
     , vlSymsp{new Vdecode__Syms(contextp(), _vcname__, this)}
     , clk{vlSymsp->TOP.clk}
     , rst{vlSymsp->TOP.rst}
-    , instrs_in{vlSymsp->TOP.instrs_in}
+    , decoded_op{vlSymsp->TOP.decoded_op}
+    , instr_type{vlSymsp->TOP.instr_type}
+    , instr_type_immediate{vlSymsp->TOP.instr_type_immediate}
+    , rs1{vlSymsp->TOP.rs1}
+    , rs2{vlSymsp->TOP.rs2}
+    , rd{vlSymsp->TOP.rd}
+    , is_br{vlSymsp->TOP.is_br}
+    , is_jmp{vlSymsp->TOP.is_jmp}
+    , rd_mem{vlSymsp->TOP.rd_mem}
+    , wr_mem{vlSymsp->TOP.wr_mem}
+    , wr_reg{vlSymsp->TOP.wr_reg}
+    , instr{vlSymsp->TOP.instr}
+    , imm_val{vlSymsp->TOP.imm_val}
     , rootp{&(vlSymsp->TOP)}
 {
     // Register model with the context

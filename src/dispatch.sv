@@ -1,7 +1,7 @@
-#include "define.vh"
+`include "define.svh"
 
 module dispatch#(
-    parameter DEPTH = 128;
+    parameter DEPTH = 128
 )(
     input clk,
     input rst_n,
@@ -14,11 +14,11 @@ module dispatch#(
 );
 
 
-reg [$clog2(DEPTH):0] w_ptr, r_ptr;
-reg [`DE_instr_width-1:0] disptach_queue[0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
+logic [$clog2(DEPTH):0] w_ptr, r_ptr;
+logic [`DE_instr_width-1:0] disptach_queue[0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
 
-wire empty_int = (w_ptr[$clog2(DEPTH)] == r_ptr[$clog2(DEPTH)]);
-wire full_or_empty =(w_ptr[$clog2(DEPTH)-1:0] == r_ptr[$clog2(DEPTH)-1:0]);
+logic empty_int = (w_ptr[$clog2(DEPTH)] == r_ptr[$clog2(DEPTH)]);
+logic full_or_empty =(w_ptr[$clog2(DEPTH)-1:0] == r_ptr[$clog2(DEPTH)-1:0]);
 assign full = full_or_empty & !empty_int;
 assign empty = full_or_empty & empty_int;
 
@@ -36,9 +36,9 @@ always@(posedge clk) begin
         w_ptr   <= 0;
     end else if(w_en & !full) begin
         w_ptr   <= w_ptr + 1;
-        disptach_queue[w_ptr[$clog(DEPTH)-1:0]] <= instr_in;
+        disptach_queue[w_ptr[$clog2(DEPTH)-1:0]] <= instr_in;
     end
 end
 
-assign instr_out = disptach_queue[r_ptr[$clog(DEPTH)-1:0]]; // assign the instr_out to whatever the read pointer is pointing at
+assign instr_out = disptach_queue[r_ptr[$clog2(DEPTH)-1:0]]; // assign the instr_out to whatever the read pointer is pointing at
 endmodule
