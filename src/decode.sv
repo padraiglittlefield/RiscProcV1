@@ -6,20 +6,8 @@ module decode (
     //input logic [(`INSTBITS * `FETCH_WIDTH)-1:0] instrs_in
     input [31:0] instr,
 
-    output instr_op_t decoded_op,       //holds the enum for what decoded instruction
-    output [3:0] instr_type,            // instruction format type information for decoding purpose 
-    output [2:0] instr_type_immediate,  // immediate type information for decodding purpose 
-    output [`DBITS-1:0] imm_val,
-    output [4:0] rs1,
-    output [4:0] rs2,
-    output [4:0] rd,
-    output is_br,   
-    output is_jmp, 
-    output rd_mem,  
-    output wr_mem,  
-    output wr_reg  
-
-
+    output decoded_instr_t decoded
+    
 );
 
 // genvar i;
@@ -30,6 +18,20 @@ module decode (
 //     assign instr = instrs_in[(`INSTBITS*i)-1:(`INSTBITS*(i-1))];
 
     // temp wires for pulling info from isntr
+    
+    instr_op_t decoded_op;       //holds the enum for what decoded instruction
+    logic [3:0] instr_type;            // instruction format type information for decoding purpose 
+    logic [2:0] instr_type_immediate;  // immediate type information for decodding purpose 
+    logic [`DBITS-1:0] imm_val;
+    logic [4:0] rs1;
+    logic [4:0] rs2;
+    logic [4:0] rd;
+    logic is_br;   
+    logic is_jmp; 
+    logic rd_mem;  
+    logic wr_mem;  
+    logic wr_reg; 
+
     logic [2:0] F3; 
     logic [6:0] F7; 
     logic [6:0] instr_op; 
@@ -235,4 +237,19 @@ module decode (
                         (decoded_op == JAL_I) || 
                         (decoded_op == JALR_I)) ? ((rd != 0) ? 1 : 0): 0; 
 
+
+
+
+assign decoded.decoded_op =  decoded_op;     
+assign decoded.instr_type =  instr_type;           
+assign decoded.instr_type_immediate =  instr_type_immediate;   
+assign decoded.imm_val =  imm_val;
+assign decoded.rs1 =  rs1;
+assign decoded.rs2 =  rs2;
+assign decoded.rd =  rd;
+assign decoded.is_br =  is_br;   
+assign decoded.is_jmp =  is_jmp; 
+assign decoded.rd_mem =  rd_mem;  
+assign decoded.wr_mem =  wr_mem;  
+assign decoded.wr_reg =  wr_reg; 
 endmodule

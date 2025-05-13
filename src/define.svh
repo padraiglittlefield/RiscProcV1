@@ -9,7 +9,6 @@
 
 
 
-
 `define FETCH_WIDTH 4
 
 // Decode and Dispatch
@@ -51,6 +50,22 @@ typedef enum logic[5:0] {
     BGEU_I,   
     INVALID_I
 } instr_op_t;
+
+typedef struct packed {
+  instr_op_t decoded_op;       //holds the enum for what decoded instruction
+  logic [3:0] instr_type;            // instruction format type information for decoding purpose 
+  logic [2:0] instr_type_immediate;  // immediate type information for decodding purpose 
+  logic [`DBITS-1:0] imm_val;
+  logic [4:0] rs1;
+  logic [4:0] rs2;
+  logic [4:0] rd;
+  logic is_br;   
+  logic is_jmp; 
+  logic rd_mem;  
+  logic wr_mem;  
+  logic wr_reg;
+} decoded_instr_t;
+
 
 `define ADD_OPCODE 7'b0110011
   `define ADD_FUNCT3 3'b000

@@ -7,8 +7,8 @@ module dispatch#(
     input rst_n,
     input w_en,
     input r_en,
-    input [`DE_instr_width-1:0] instr_in,
-    output [`DE_instr_width-1:0] instr_out,
+    input decoded_instr_t instr_in,
+    output decoded_instr_t instr_out,
     output full,
     output empty
 );
