@@ -201,4 +201,5 @@ typedef struct packed {
 
 `define DE_instr_width 10 // the data size of the decoded instruction that will be passed down the pipeline
 
-`endif 
+`endif
+
