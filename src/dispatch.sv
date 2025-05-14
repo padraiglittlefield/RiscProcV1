@@ -4,21 +4,25 @@ module dispatch#(
     parameter DEPTH = 128
 )(
     input clk,
-    input rst_n,
-    input w_en,
-    input r_en,
+    input  logic rst_n,
+    input  logic w_en,
+    input  logic r_en,
     input decoded_instr_t instr_in,
     output decoded_instr_t instr_out,
-    output full,
-    output empty
+    output logic  full,
+    output logic  empty
 );
 
 
 logic [$clog2(DEPTH):0] w_ptr, r_ptr;
-logic [`DE_instr_width-1:0] disptach_queue[0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
+logic [64:0] disptach_queue [0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
 
-logic empty_int = (w_ptr[$clog2(DEPTH)] == r_ptr[$clog2(DEPTH)]);
-logic full_or_empty =(w_ptr[$clog2(DEPTH)-1:0] == r_ptr[$clog2(DEPTH)-1:0]);
+logic empty_int;
+assign empty_int = (w_ptr[$clog2(DEPTH)] == r_ptr[$clog2(DEPTH)]);
+logic full_or_empty;
+assign full_or_empty = (w_ptr[$clog2(DEPTH)-1:0] == r_ptr[$clog2(DEPTH)-1:0]);
+
+
 assign full = full_or_empty & !empty_int;
 assign empty = full_or_empty & empty_int;
 

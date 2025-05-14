@@ -3,33 +3,34 @@
 module free_preg_queue#(
     parameter DEPTH = 128
 ) (
-    input clk,
-    input rst_n,
-    input w_en,
-    input r_en,
-    input [6:0]  preg_in,  // just identifies which PREG is free for use
-    output [6:0] preg_out,
-    output full,
-    output empty
+    input logic clk,
+    input logic rst_n,
+    input logic w_en,
+    input logic r_en,
+    input logic [6:0]  preg_in,  // just identifies which PREG is free for use
+    output logic  [6:0] preg_out,
+    output logic full,
+    output logic empty
 );
 
 
 logic [$clog2(DEPTH):0] w_ptr, r_ptr;
-//logic [6:0] free_queue[0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
-reg [6:0] free_queue[0:127];
+logic [6:0] free_queue[0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
+logic empty_int; 
+logic full_or_empty;
 
-logic empty_int = (w_ptr[$clog2(DEPTH)] == r_ptr[$clog2(DEPTH)]);
-logic full_or_empty =(w_ptr[$clog2(DEPTH)-1:0] == r_ptr[$clog2(DEPTH)-1:0]);
+assign empty_int = (w_ptr[$clog2(DEPTH)] == r_ptr[$clog2(DEPTH)]);
+assign full_or_empty  =(w_ptr[$clog2(DEPTH)-1:0] == r_ptr[$clog2(DEPTH)-1:0]);
 assign full = full_or_empty & !empty_int;
 assign empty = full_or_empty & empty_int;
 
-logic [6:0] preg_num;
 // reset the free queue 
+integer i;
 always@(posedge clk) begin
   if(rst_n) begin
     w_ptr <= {1'b1, 7'b0}; // this is not correct. Needs to signifiy that its full
-    for ( preg_num = 0; preg_num < {1'b1,6'b0}; preg_num++) begin
-     free_queue[preg_num] <= preg_num; 
+    for ( i = 0; i < {1'b1,6'b0}; i++) begin
+     free_queue[i[6:0]] <= i[6:0]; 
     end
   end else if(w_en & !full) begin
         w_ptr   <= w_ptr + 1;
