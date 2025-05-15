@@ -14,6 +14,8 @@
 // Decode and Dispatch
 `define DISPATCH_WIDTH 4
 
+`define RENAME_WIDTH 4
+
 typedef enum logic[5:0] {  
     ADD_I = 6'b0,     
     SUB_I,     
