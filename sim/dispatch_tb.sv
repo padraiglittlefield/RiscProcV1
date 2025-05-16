@@ -29,7 +29,7 @@ module dispatch_tb;
   
   initial
     begin
-     $dumpfile("Core_Simulation.sv");
+     $dumpfile("dispatch_tb.vcd");
      $dumpvars(0,dispatch_tb);
     
     clk = 0;

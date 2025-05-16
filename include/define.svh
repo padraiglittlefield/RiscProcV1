@@ -197,7 +197,7 @@ typedef struct packed {
 
 
 // Register Renaming
-`define NUM_ARESG   32
+`define NUM_AREGS   32
 `define NUM_PREGS   128
 
 
