@@ -6,8 +6,8 @@ module RAT(
       input rst,
 
       // read ports
-      input logic [($clog2(`NUM_AREGS) * `RENAME_WIDTH)-1:0] areg,         // the areg to be translated
-      output logic [($clog2(`NUM_PREGS) * `RENAME_WIDTH)-1:0]  preg_alias,  // the preg alias for that areg
+      input logic [($clog2(`NUM_AREGS) * `RENAME_WIDTH * 3)-1:0] areg,         // the areg to be translated
+      output logic [($clog2(`NUM_PREGS) * `RENAME_WIDTH * 3)-1:0]  preg_alias,  // the preg alias for that areg
       
       // write ports
       input logic [`RENAME_WIDTH-1:0] w_en,
@@ -45,10 +45,10 @@ module RAT(
   endgenerate
 
 
-  //reading from the RATS.
+  //reading from the RATS. TODO allow for multiple reads for rd, src1, and src2
   genvar j;
   generate
-      for( j = 1; j <= `RENAME_WIDTH; j++) begin
+      for( j = 1; j <= `RENAME_WIDTH * 3; j++) begin
         assign preg_alias[(j * $clog2(`NUM_PREGS))-1:((j-1) * $clog2(`NUM_PREGS))] = register_alias_table[areg[(j * $clog2(`NUM_AREGS))-1:((j-1) * $clog2(`NUM_AREGS))]]; 
       end
   endgenerate

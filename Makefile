@@ -1,19 +1,18 @@
 mod = idu
 .DEFAULT_GOAL := test
 
-
 .PHONY:test
 test:
 	rm -rf .stamp.*;
 	rm -rf ./obj_dir
-	make verilate mod=$(target)
+	make verilate mod=$(target) extras="$(extras)"
 	make build mod=$(target)
 
 .PHONY:make_view
 make_view:
 	rm -rf .stamp.*;
 	rm -rf ./obj_dir
-	make verilate mod=$(target)
+	make verilate mod=$(target) extras="$(extras)"
 	make build mod=$(target)
 	make waves mod=$(target)
 
@@ -23,12 +22,11 @@ verilate: .stamp.verilate
 .PHONY:build
 build: .stamp.build
 
-
 .PHONY:waves 
 waves: .stamp.waves
 
-.stamp.verilate: src/$(mod).sv sim/$(mod)_tb.sv	
-	verilator --binary --trace --timing --exe --build -Iinclude sim/$(mod)_tb.sv src/$(mod).sv  --top-module $(mod)_tb
+.stamp.verilate:
+	verilator --binary --trace --timing --exe --build -Iinclude sim/$(mod)_tb.sv src/$(mod).sv $(extras) --top-module $(mod)_tb
 	@touch .stamp.verilate
 
 .stamp.build: obj_dir/V$(mod)_tb
@@ -38,7 +36,6 @@ waves: .stamp.waves
 .stamp.waves: $(mod)_tb.vcd
 	gtkwave $(mod)_tb.vcd
 	@touch .stamp.waves
-
 
 .PHONY: clean
 clean:

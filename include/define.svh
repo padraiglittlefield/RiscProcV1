@@ -14,7 +14,7 @@
 // Decode and Dispatch
 `define DISPATCH_WIDTH 4
 
-`define RENAME_WIDTH 4
+`define RENAME_WIDTH 1
 
 typedef enum logic[5:0] {  
     ADD_I = 6'b0,     
@@ -53,14 +53,15 @@ typedef enum logic[5:0] {
     INVALID_I
 } instr_op_t;
 
+`define NUM_AREGS   32
 typedef struct packed {
   instr_op_t decoded_op;       //holds the enum for what decoded instruction
   logic [3:0] instr_type;            // instruction format type information for decoding purpose 
   logic [2:0] instr_type_immediate;  // immediate type information for decodding purpose 
   logic [`DBITS-1:0] imm_val;
-  logic [4:0] rs1;
-  logic [4:0] rs2;
-  logic [4:0] rd;
+  logic [$clog2(`NUM_AREGS)-1:0] rd;
+  logic [$clog2(`NUM_AREGS)-1:0] rs1;
+  logic [$clog2(`NUM_AREGS)-1:0] rs2; 
   logic is_br;   
   logic is_jmp; 
   logic rd_mem;  
@@ -193,13 +194,24 @@ typedef struct packed {
     `define B_immediate 5  
 
 
-
-
-
 // Register Renaming
-`define NUM_AREGS   32
 `define NUM_PREGS   128
 
+typedef struct packed {
+  instr_op_t decoded_op;       
+  logic [3:0] instr_type;           
+  logic [2:0] instr_type_immediate;  
+  logic [`DBITS-1:0] imm_val;
+  logic [$clog2(`NUM_PREGS)-1:0] rr_rd; // renamed src and dst 
+  logic [$clog2(`NUM_PREGS)-1:0] rr_rs1;
+  logic [$clog2(`NUM_PREGS)-1:0] rr_rs2; 
+  logic is_br;   
+  logic is_jmp; 
+  logic rd_mem;  
+  logic wr_mem;  
+  logic wr_reg;
+  logic [$clog2(`NUM_PREGS)-1:0] prev_alias; // for ROB
+} decoded_rr_instr_t;
 
 `define DE_instr_width 10 // the data size of the decoded instruction that will be passed down the pipeline
 
