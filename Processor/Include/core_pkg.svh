@@ -1,2 +1,0 @@
-package CORE_PKG
-endpackage
