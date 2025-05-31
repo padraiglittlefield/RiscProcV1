@@ -23,6 +23,8 @@ logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;
 genvar i;
 generate
     for(i = 1; i <= NUM_FUS; i++) begin
+        
+        
         DependencyMatrix matrix (
             .clk(clk),
             .rst(rst),
@@ -37,16 +39,28 @@ generate
         );
     end
 
-    /* put per row shift register here. Set shift_en[i] == total_ready_vector[i] and set
+    /* Supporting Specculative Wakeup
+
+        *Put per row shift register here. Set shift_en[i] == total_ready_vector[i] and set
         request_vector[i] == LSB of reg.
 
         TODO: Need a way to set the shift value based on the latency of the completeing instruction.
         need to make sure that the latency is set by the most recent completing entry 
 
     */
+    assign entry_ready[i-1] = ready_vector[(NUM_ROWS*i)-1:(NUM_ROWS*(i-1))] == '0;
+
+    ShiftRegister delayed_request(
+        .clk(clk),
+        .rst(rst),
+        .shift_en(entry_ready[i-1]), // M
+        .w_en(),
+        .latency_in(),
+        .ready()
+    );
     
-    assign request_vector[i-1] = ready_vector[(NUM_ROWS*i)-1:(NUM_ROWS*(i-1))] == '0;
     
+
 endgenerate
 
 endmodule

@@ -13,8 +13,8 @@ module DependencyMatrix#(
     input [NUM_COLS-1:0] clear_lines,               // Which Cols to reset to 0 when a dependent instruction has been selected for execution
     input free_en,                                  // Enable for clearing an entry on the selection of an instruction for scheduling
     input [$clog2(NUM_ROWS)-1:0] free_row_index,    // Index of which entry to clear
-    output [NUM_ROWS-1:0] ready_vector              // Vector of which entries have no dependecies
-
+    output [NUM_ROWS-1:0] ready_vector,              // Vector of which entries have no dependecies
+    output [NUM_ROWS-1:0] changed_vector
 
 );
 
@@ -38,7 +38,10 @@ always_ff @(posedge clk) begin
             for (int i = 0; i < NUM_ROWS; i++) begin
                 for (int j = 0; j < NUM_COLS; j++) begin
                     if (clear_lines[j])
-                        bit_matrix[i][j] <= 1'b0;
+                        if(bit_matrix[i][j]) begin
+                            bit_matrix[i][j] <= 1'b0;
+                            changed_vector[i] <= 1'b1;
+                        end
                 end
             end
         end
