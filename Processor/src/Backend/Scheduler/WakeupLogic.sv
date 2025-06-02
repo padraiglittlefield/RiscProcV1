@@ -13,18 +13,18 @@ module WakeupLogic#(
     input clear_en,
     input [(NUM_COLS * NUM_FUS)-1:0] clear_lines,                
     input free_en,       
-    input [$clog2(NUM_ROWS)-1:0] free_row_index,     
+    input [$clog2(NUM_ROWS)-1:0] free_row_index,    
+    input [7:0] entry_latency_in [0:NUM_FUS-1], 
     output [NUM_ROWS-1:0] request_vector
 );
 
 
-logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;   
+logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;  
+//logic [NUM_ROWS-1:0] entry_ready [0:NUM_FUS-1]; 
 
 genvar i;
 generate
     for(i = 1; i <= NUM_FUS; i++) begin
-        
-        
         DependencyMatrix matrix (
             .clk(clk),
             .rst(rst),
@@ -35,32 +35,40 @@ generate
             .clear_lines(clear_lines),                
             .free_en(free_en),       
             .free_row_index(free_row_index),     
-            .ready_vector(ready_vector[(NUM_ROWS*i)-1:(NUM_ROWS*(i-1))]) 
+            .ready_vector(ready_vector[(NUM_ROWS*i)-1:(NUM_ROWS*(i-1))]),
+
         );
     end
+    //assign entry_ready[i-1] = ready_vector[(NUM_ROWS*i)-1:(NUM_ROWS*(i-1))] == '0;    
+endgenerate
 
-    /* Supporting Specculative Wakeup
+logic entry_ready [(NUM_ROWS-1):0];
 
-        *Put per row shift register here. Set shift_en[i] == total_ready_vector[i] and set
-        request_vector[i] == LSB of reg.
-
-        TODO: Need a way to set the shift value based on the latency of the completeing instruction.
-        need to make sure that the latency is set by the most recent completing entry 
-
-    */
-    assign entry_ready[i-1] = ready_vector[(NUM_ROWS*i)-1:(NUM_ROWS*(i-1))] == '0;
-
-    ShiftRegister delayed_request(
-        .clk(clk),
-        .rst(rst),
-        .shift_en(entry_ready[i-1]), // M
-        .w_en(),
-        .latency_in(),
-        .ready()
-    );
+genvar j;
+generate`
     
-    
+    for(j = 1; j<= NUM_ROWS; j++) begin
+        
+        ShiftRegister delayed_request(
+            .clk(clk),
+            .rst(rst),
+            .shift_en(entry_ready),    // Match
+            .w_en(),        // On select Rows  
+            .latency_in(),  // entry_latency_in -> Written to when an instruction is allocated
+            .ready(request_vector[(j-1)])        // 
+        );
+
+        assign entry_ready = {ready_vector[(j-1)+0],ready_vector[(j-1)+1],ready_vector[(j-1)+2]ready_vector[(j-1)+3]} == '0 // Must edit if we increase number of FUs
+    end
 
 endgenerate
+
+
+// TODO: Should I put this here or track this info at a higher level
+FIFO #(
+
+) FreeEntryQueue (
+
+);
 
 endmodule
