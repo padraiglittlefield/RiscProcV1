@@ -1,26 +1,34 @@
 import CORE_PKG::*;
+`include wakeup_dispatch_if.svh 
+`include wakeup_select_if.svh
+
 
 module WakeupLogic#(
     parameter NUM_ROWS = 8
     parameter NUM_COLS = 8
     parameter NUM_FUS = 4
 )(
-    input clk,
-    input rst,
-    input w_en,                       
-    input [$clog2(NUM_ROWS)-1:0] w_row_index,       
-    input [(NUM_COLS * NUM_FUS)-1:0] set_lines,                 
-    input clear_en,
-    input [(NUM_COLS * NUM_FUS)-1:0] clear_lines,                
-    input free_en,       
-    input [$clog2(NUM_ROWS)-1:0] free_row_index,    
-    input [7:0] entry_latency_in [0:NUM_FUS-1], 
+    input logic clk,
+    input logic rst,
+    WakeupDispatchIF.Wwakeup wakeupDispatch
+     
     output [NUM_ROWS-1:0] request_vector
 );
 
 
 logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;  
 //logic [NUM_ROWS-1:0] entry_ready [0:NUM_FUS-1]; 
+
+
+// Signals for interacting with dependency matrix
+logic w_en;                       
+logic [$clog2(NUM_ROWS)-1:0] w_row_index;       
+logic [(NUM_COLS * NUM_FUS)-1:0] set_lines;                 
+logic clear_en;
+logic [(NUM_COLS * NUM_FUS)-1:0] clear_lines;                
+logic free_en;       
+logic [$clog2(NUM_ROWS)-1:0] free_row_index;    
+logic [7:0] entry_latency_in [0:NUM_FUS-1];
 
 genvar i;
 generate
@@ -46,7 +54,6 @@ logic entry_ready [(NUM_ROWS-1):0];
 
 genvar j;
 generate`
-    
     for(j = 1; j<= NUM_ROWS; j++) begin
         
         ShiftRegister delayed_request(
