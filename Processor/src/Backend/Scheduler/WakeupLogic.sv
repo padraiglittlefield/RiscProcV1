@@ -71,11 +71,20 @@ generate`
 endgenerate
 
 
-// TODO: Should I put this here or track this info at a higher level
+logic empty;
+assign wakeupDispatch.entry_free = !empty;
+
 FIFO #(
-
+    DEPTH = NUM_FUS
 ) FreeEntryQueue (
-
+    .clk(clk),
+    .rst(rst),
+    .w_en(),
+    .r_en(),
+    .data_in()
+    .data_out(),
+    .full(full),
+    .empty(empty)
 );
 
 endmodule
