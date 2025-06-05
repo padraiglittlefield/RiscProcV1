@@ -50,7 +50,6 @@ always @(posedge clk) begin
 end
 
 assign w_en = dispatch_valid & entry_free;  // Only write when both the dispatched instruction is valid and we have room 
-assign w_row_index = free_entry;
 
 genvar i;
 generate
