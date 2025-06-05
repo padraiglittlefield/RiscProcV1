@@ -9,8 +9,8 @@ module WakeupLogic#(
 )(
     input logic clk,
     input logic rst,
-    WakeupDispatchIF.Wwakeup wakeupDispatch
-     
+    WakeupDispatchIF.Wakeup wakeupDispatch
+    
     output [NUM_ROWS-1:0] request_vector
 );
 
@@ -29,6 +29,29 @@ logic free_en;
 logic [$clog2(NUM_ROWS)-1:0] free_row_index;    
 logic [7:0] entry_latency_in [0:NUM_FUS-1];
 
+
+/* 
+    Set Lines: [0 0 0 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]
+    src1_dp_loc: {7:4->FU_INDEX, 3:0->COL_INDEX}
+    Set Lines [(src1_dp_loc[7:4]<< $clog2(NUM_FUS)) + src1_dp_loc[3:0]] = 1;
+*/
+always @(posedge clk) begin
+    if(rst) begin
+        set_lines <= '0;
+    end else begin
+        set_lines <= '0;
+        if(wakeupDispatch.src1_dp_en) begin
+            set_lines[(src1_dp_loc[7:4]<< $clog2(NUM_FUS)) + src1_dp_loc[3:0]] <= 1'b1;
+        end
+        if(wakeupDispatch.src2_dp_en) begin
+            set_lines[(src2_dp_loc[7:4]<< $clog2(NUM_FUS)) + src2_dp_loc[3:0]] <= 1'b1;
+        end
+    end
+end
+
+assign w_en = dispatch_valid & entry_free;  // Only write when both the dispatched instruction is valid and we have room 
+assign w_row_index = free_entry;
+
 genvar i;
 generate
     for(i = 1; i <= NUM_FUS; i++) begin
@@ -46,10 +69,10 @@ generate
 
         );
     end
-
 endgenerate
 
 logic empty;
+logic free_entry;
 assign wakeupDispatch.entry_free = !empty;
 
 assign w_en 
