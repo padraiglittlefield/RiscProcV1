@@ -6,7 +6,6 @@ import CORE_PKG::*;
 module WakeupLogic#(
     parameter NUM_ROWS = 8
     parameter NUM_COLS = 8
-    parameter NUM_FUS = 4
 )(
     input logic clk,
     input logic rst,
@@ -47,8 +46,27 @@ generate
 
         );
     end
-    //assign entry_ready[i-1] = ready_vector[(NUM_ROWS*i)-1:(NUM_ROWS*(i-1))] == '0;    
+
 endgenerate
+
+logic empty;
+assign wakeupDispatch.entry_free = !empty;
+
+assign w_en 
+
+
+FIFO #(
+    .DEPTH(NUM_FUS)
+    ) FreeEntryQueue (
+    .clk(clk),
+    .rst(rst),
+    .w_en(free_en),
+    .data_in(free_entry),
+    .r_en(w_en),
+    .data_out(w_row_index),
+    .full(full),
+    .empty(empty)
+);
 
 logic entry_ready [(NUM_ROWS-1):0];
 
@@ -71,20 +89,5 @@ generate`
 endgenerate
 
 
-logic empty;
-assign wakeupDispatch.entry_free = !empty;
-
-FIFO #(
-    DEPTH = NUM_FUS
-) FreeEntryQueue (
-    .clk(clk),
-    .rst(rst),
-    .w_en(),
-    .r_en(),
-    .data_in()
-    .data_out(),
-    .full(full),
-    .empty(empty)
-);
 
 endmodule

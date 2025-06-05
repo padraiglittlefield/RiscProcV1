@@ -1,7 +1,9 @@
 import CORE_PKG::*
 
 module FIFO #(
-    parameter DEPTH = 128)(
+    parameter DEPTH = 128
+    
+    )(
     input logic clk,
     input logic rst,
     input logic w_en,

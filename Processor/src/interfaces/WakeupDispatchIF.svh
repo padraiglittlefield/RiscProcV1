@@ -7,17 +7,22 @@ import CORE_PKG::*;
 
 interface WakeupDispatchIF;
 
-    logic entry_free;
+    logic entry_free;       // Whether or not there is room in the entry queue for another instructions
+    logic dispatch_valid;   // Whether or not dispatch instruction is valid
+    logic src1_dp_en;      // Is src 1 waiting on an instruction to finish
+    logic src2_dp_en;      // Is src 2 waiting on an instruction to finish
+    logic [(2 * NUM_FUS)-1:0] src1_dp_loc;     // Which srcs are not ready. Entry nums will be read from DLT or will be 0 if dst is ready
+    logic [(2 * NUM_FUS)-1:0] src2_dp_loc;     // Which srcs are not ready. Entry nums will be read from DLT
 
     modport Dispatch (
-      input a,
-      output entry_free,
+      input entry_free,
+      output dispatch_valid, src1_dp_loc, src2_dp_loc, src1_dp_en, src2_dp_en
         
     );
 
     modport Wakeup (
-        input entry_free, 
-        output b,
+        input dispatch_valid, src1_dp_loc, src2_dp_loc, src1_dp_en, src2_dp_en  
+        output entry_free,
     );
 
 endinterface
