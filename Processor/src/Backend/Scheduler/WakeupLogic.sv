@@ -4,16 +4,17 @@ import CORE_PKG::*;
 
 
 module WakeupLogic#(
-    parameter NUM_ROWS = 8
-    parameter NUM_COLS = 8
+    
 )(
     input logic clk,
     input logic rst,
     WakeupDispatchIF.Wakeup wakeupDispatch
+    WakeupSelectIF.Wakeup  wakeupSelect
     
-    output [NUM_ROWS-1:0] request_vector
 );
 
+localparam NUM_ROWS = RS_ENTRIES;
+localparam NUM_COLS = RS_ENTRIES;
 
 logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;  
 //logic [NUM_ROWS-1:0] entry_ready [0:NUM_FUS-1]; 
@@ -29,6 +30,26 @@ logic free_en;
 logic [$clog2(NUM_ROWS)-1:0] free_row_index;    
 logic [7:0] entry_latency_in [0:NUM_FUS-1];
 
+genvar i;
+generate
+    for(i = 0; i < NUM_FUS; i++) begin
+        DependencyMatrix #(
+            .NUM_ROWS(NUM_ROWS),
+            .NUM_COLS(NUM_COLS)
+        ) matrix (
+            .clk(clk),
+            .rst(rst),
+            .w_en(w_en),                       
+            .w_row_index(w_row_index),       
+            .set_lines(set_lines[(NUM_COLS*(i+1))-1:(NUM_COLS*i)]), 
+            .clear_en(clear_en),      
+            .clear_lines(clear_lines),                
+            .free_en(free_en),       
+            .free_row_index(free_row_index),     
+            .ready_vector(ready_vector[(NUM_ROWS*(i+1))-1:(NUM_ROWS*(i))])
+        );
+    end
+endgenerate
 
 /* 
     Set Lines: [0 0 0 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]
@@ -52,32 +73,12 @@ end
 
 assign w_en = dispatch_valid & entry_free;  // Only write when both the dispatched instruction is valid and we have room 
 
-genvar i;
-generate
-    for(i = 0; i < NUM_FUS; i++) begin
-        DependencyMatrix matrix (
-            .clk(clk),
-            .rst(rst),
-            .w_en(w_en),                       
-            .w_row_index(w_row_index),       
-            .set_lines(set_lines[(NUM_COLS*(i+1))-1:(NUM_COLS*i)]), 
-            .clear_en(clear_en),      
-            .clear_lines(clear_lines),                
-            .free_en(free_en),       
-            .free_row_index(free_row_index),     
-            .ready_vector(ready_vector[(NUM_ROWS*(i+1))-1:(NUM_ROWS*(i))]),
-
-        );
-    end
-endgenerate
-
 logic empty;
 logic free_entry;
 assign wakeupDispatch.entry_free = !empty;
+assign wakeupDispatch.entry_index = free_entry;
 
-assign w_en 
-
-
+// TODO: Still need to connect free_en and free_entry to something
 FIFO #(
     .DEPTH(NUM_FUS)
     ) FreeEntryQueue (
@@ -91,7 +92,6 @@ FIFO #(
     .empty(empty)
 );
 
-logic entry_ready [(NUM_ROWS-1):0];
 
 
 /* Speculatve Instruction Wakeup
@@ -103,6 +103,10 @@ logic entry_ready [(NUM_ROWS-1):0];
             1. How do we know which latency was related to the most recently selected instruction
             2. How to handle replay logic on the selection of Loads as their latency is not guarenteed
 */
+
+logic entry_ready [(NUM_ROWS-1):0];
+logic selected [(NUM_ROWS-1):0];
+logic [NUM_ROWS-1:0] request_vector;
 genvar j;
 generate
     for(j = 0; j < NUM_ROWS; j++) begin
@@ -110,8 +114,8 @@ generate
             .clk(clk),
             .rst(rst),
             .shift_en(entry_ready[j]),    // Match
-            .w_en(),          
-            .latency_in(),  
+            .w_en(wakeupDispatch.dispatch_valid),          
+            .latency_in(wakeupDispatch.max_latency),  
             .ready(request_vector[j])        // 
         );
         genvar f;
@@ -119,10 +123,7 @@ generate
             assign row_ready_bits[f] = ready_vector[f*NUM_ROWS + j];
         end
         assign entry_ready[j] = (row_ready_bits == '0);
+        assign wakeupSelect.request_vector[j] = request_vector[j] & ~selected[j];   // Make sure we dont try and scheduled an instruction that has already been selected
     end
-
 endgenerate
-
-
-
 endmodule

@@ -7,17 +7,18 @@ import CORE_PKG::*;
 
 interface WakeupSelectIF;
 
-    logic entry_free;
+    logic [NUM_ROWS-1:0] request_vector;
+    logic [NUM_ROWS-1:0] select_vector;
 
     modport Select (
-      input a,
-      output entry_free,
+      input request_vector,
+      output select_vector,
         
     );
 
     modport Wakeup (
-        input entry_free, 
-        output b,
+        input select_vector, 
+        output request_vectors,
     );
 
 endinterface
