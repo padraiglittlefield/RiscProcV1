@@ -7,17 +7,18 @@ import CORE_PKG::*;
 
 interface WakeupSelectIF;
 
-    logic [NUM_ROWS-1:0] request_vector;
-    logic [NUM_ROWS-1:0] select_vector;
+    logic [RS_ENTRIES-1:0] request_vector;
+    logic [$clog2(RS_ENTRIES)-1:0] grant_index;
+    logic grant_en;
 
     modport Select (
       input request_vector,
-      output select_vector,
+      output grant_index, grant_en
         
     );
 
     modport Wakeup (
-        input select_vector, 
+        input grant_index, grant_en
         output request_vectors,
     );
 

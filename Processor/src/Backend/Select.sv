@@ -7,7 +7,7 @@ module Select #(
     input clk,
     input rst,
     output logic clear_en,
-    output logic [(RS_ENTRIES * NUM_FUS)-1:0] clear_lines,                
+    output logic [(RS_ENTRIES)-1:0] clear_index,                
     WakeupSelectIF.Select wakeupSelect,
     DispatchSelectIF.Select dispatchSelect,
     SelectRegReadIF.Select selectRegRead
@@ -18,21 +18,20 @@ module Select #(
         - Generate select vector, grab payload ram entry as well as read
 */
 
-logic [$clog2(RS_ENTRIES)-1:0] selected_index;
-logic select_en;
 always_comb begin
-    select_en = 1'b0;
-    selected_index = '0;
-    for (int i = 0; i < ; i++) begin
-    if (wakeupSelect.request_vector[i]) begin
-        selected_index = i;
-        select_en = 1'b1;
-        break;
-    end
+    for (int i = 0; i < ; i++) begin    // Priority Encoder for granting request
+        if (wakeupSelect.request_vector[i]) begin
+            wakeupSelect.grant_index = i;
+            wakeupSelect.grant_en = 1'b1;
+            break;
+        end
     end
 end
 
-
+assign clear_en = wakeupwakeupSelect.grant_en;
+assign clear_index = wakeupSelect.grant_index;
+Disp_uOP selected_payload;
+assign selected_payload = payload_ram[wakeupSelect.grant_index];
 
 /*
     "Payload" Ram
@@ -51,20 +50,7 @@ always@(posedge clk) begin
     end
 end
 
-Disp_uOP selected_payload;
-assign selected_payload = payload_ram[selected_index];
 
-
-/*
-    Broadcast Selected - Needs to globally effect all wakeups. 
-        - Each select needs to update the clear lines signals
-*/
-
-
-
-
-
-
-
+// TODO: Connect up everythong to Register Read
 
 endmodule

@@ -126,4 +126,16 @@ generate
         assign wakeupSelect.request_vector[j] = request_vector[j] & ~selected[j];   // Make sure we dont try and scheduled an instruction that has already been selected
     end
 endgenerate
+
+//TODO: Need to add a way to free entries, as well as setting and clearing the selected reg
+always@(posedge clk) begin
+    if(rst) begin
+        selected = '0;
+    end else begin
+        if(wakeupSelect.grant_en) begin
+            select[wakeupSelect.grant_index] = 1'b1;
+        end
+    end
+end
+
 endmodule
