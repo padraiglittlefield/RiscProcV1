@@ -6,9 +6,10 @@ module Select #(
 )(
     input clk,
     input rst,
+    output logic clear_en,
+    output logic [(RS_ENTRIES * NUM_FUS)-1:0] clear_lines,                
     WakeupSelectIF.Select wakeupSelect,
     DispatchSelectIF.Select dispatchSelect,
-    //SelectRegFielIF.Select regfileSelect,
     SelectRegReadIF.Select selectRegRead
 );
 
@@ -17,15 +18,18 @@ module Select #(
         - Generate select vector, grab payload ram entry as well as read
 */
 
-logic selected_index;
+logic [$clog2(RS_ENTRIES)-1:0] selected_index;
+logic select_en;
 always_comb begin
-  selected_index = '0;
-  for (int i = 0; i < ; i++) begin
+    select_en = 1'b0;
+    selected_index = '0;
+    for (int i = 0; i < ; i++) begin
     if (wakeupSelect.request_vector[i]) begin
-      selected_index = i;
-      break;
+        selected_index = i;
+        select_en = 1'b1;
+        break;
     end
-  end
+    end
 end
 
 
@@ -52,8 +56,15 @@ assign selected_payload = payload_ram[selected_index];
 
 
 /*
-    Broadcast Selected - Needs to globally effect all wakeups
+    Broadcast Selected - Needs to globally effect all wakeups. 
+        - Each select needs to update the clear lines signals
 */
+
+
+
+
+
+
 
 
 endmodule

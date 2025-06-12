@@ -8,6 +8,8 @@ module WakeupLogic#(
 )(
     input logic clk,
     input logic rst,
+    input logic clear_en,
+    input logic [(NUM_COLS * NUM_FUS)-1:0] clear_lines,                
     WakeupDispatchIF.Wakeup wakeupDispatch
     WakeupSelectIF.Wakeup  wakeupSelect
     
@@ -24,8 +26,6 @@ logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;
 logic w_en;                       
 logic [$clog2(NUM_ROWS)-1:0] w_row_index;       
 logic [(NUM_COLS * NUM_FUS)-1:0] set_lines;                 
-logic clear_en;
-logic [(NUM_COLS * NUM_FUS)-1:0] clear_lines;                
 logic free_en;       
 logic [$clog2(NUM_ROWS)-1:0] free_row_index;    
 logic [7:0] entry_latency_in [0:NUM_FUS-1];
