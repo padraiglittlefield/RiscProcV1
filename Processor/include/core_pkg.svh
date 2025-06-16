@@ -24,6 +24,7 @@ typedef enum logic[3:0]
 
 parameter NUM_FUS = 4
 parameter RS_ENTRIES = 8
+parameter NUM_PREGS
 
 
 typedef struct packed

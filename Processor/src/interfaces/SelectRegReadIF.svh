@@ -5,18 +5,19 @@
 `define SELECT_REG_IF
 import CORE_PKG::*;
 
-interface WakeupSelectIF;
+interface WakeupRegReadIF;
 
     logic _;
+    Sel_uOP sel_uop;
 
     modport Select (
       input _,
-      output _,
+      output sel_uop,
         
     );
 
-    modport Regfile (
-        input _, 
+    modport RegRead (
+        input sel_uop, 
         output _,
     );
 
