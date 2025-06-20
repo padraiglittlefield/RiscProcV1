@@ -36,4 +36,8 @@ typedef struct packed {
     
 } Sel_uOP;
 
+typedef struct packed {
+    
+} Ex_uOP;
+
 endpackage

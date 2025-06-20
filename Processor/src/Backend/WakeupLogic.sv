@@ -1,4 +1,4 @@
-import CORE_PKG::*;
+ import CORE_PKG::*;
 `include wakeup_dispatch_if.svh 
 `include wakeup_select_if.svh
 
@@ -10,8 +10,9 @@ module WakeupLogic#(
     input logic rst,
     input logic clear_en,
     input logic [(NUM_COLS * NUM_FUS)-1:0] clear_lines,                
-    WakeupDispatchIF.Wakeup wakeupDispatch
-    WakeupSelectIF.Wakeup  wakeupSelect
+    WakeupDispatchIF.Wakeup wakeupDispatch,
+    WakeupSelectIF.Wakeup  wakeupSelect,
+    WakeupExecuteIF.Wakeup wakeupExecute
     
 );
 
@@ -26,8 +27,8 @@ logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;
 logic w_en;                       
 logic [$clog2(NUM_ROWS)-1:0] w_row_index;       
 logic [(NUM_COLS * NUM_FUS)-1:0] set_lines;                 
-logic free_en;       
-logic [$clog2(NUM_ROWS)-1:0] free_row_index;    
+//logic free_en;       
+//logic [$clog2(NUM_ROWS)-1:0] free_row_index;    
 logic [7:0] entry_latency_in [0:NUM_FUS-1];
 
 genvar i;
@@ -44,8 +45,8 @@ generate
             .set_lines(set_lines[(NUM_COLS*(i+1))-1:(NUM_COLS*i)]), 
             .clear_en(clear_en),      
             .clear_lines(clear_lines),                
-            .free_en(free_en),       
-            .free_row_index(free_row_index),     
+            .free_en(wakeupExecute.free_en),       
+            .free_row_index(fwakeupExecute.free_index),     
             .ready_vector(ready_vector[(NUM_ROWS*(i+1))-1:(NUM_ROWS*(i))])
         );
     end
@@ -73,10 +74,9 @@ end
 
 assign w_en = dispatch_valid & entry_free;  // Only write when both the dispatched instruction is valid and we have room 
 
-logic empty;
-logic free_entry;
+
 assign wakeupDispatch.entry_free = !empty;
-assign wakeupDispatch.entry_index = free_entry;
+assign wakeupDispatch.entry_index = w_row_index;
 
 // TODO: Still need to connect free_en and free_entry to something
 FIFO #(
@@ -84,8 +84,8 @@ FIFO #(
     ) FreeEntryQueue (
     .clk(clk),
     .rst(rst),
-    .w_en(free_en),
-    .data_in(free_entry),
+    .w_en(wakeupExecute.free_en),
+    .data_in(wakeupExecute.free_entry),
     .r_en(w_en),
     .data_out(w_row_index),
     .full(full),
@@ -133,7 +133,10 @@ always@(posedge clk) begin
         selected = '0;
     end else begin
         if(wakeupSelect.grant_en) begin
-            select[wakeupSelect.grant_index] = 1'b1;
+            selected[wakeupSelect.grant_index] = 1'b1;
+        end
+        if(free_en) begin
+            selected[wakeupExecute.free_index] = 1'b0;
         end
     end
 end

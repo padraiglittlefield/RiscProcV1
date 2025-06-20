@@ -1,11 +1,11 @@
 /*
     Interface between Dispatch and Wakeup
 */
-`ifndef SELECT_REG_IF
-`define SELECT_REG_IF
+`ifndef SELECT_REG_READ_IF
+`define SELECT_REG_READ_IF
 import CORE_PKG::*;
 
-interface WakeupRegReadIF;
+interface SelectRegReadIF;
 
     logic _;
     Sel_uOP sel_uop;
