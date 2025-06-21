@@ -24,7 +24,7 @@ typedef enum logic[3:0]
 
 parameter NUM_FUS = 4
 parameter RS_ENTRIES = 8
-parameter NUM_PREGS
+parameter NUM_PREGS = 128
 
 
 typedef struct packed
@@ -33,11 +33,18 @@ typedef struct packed
 } Disp_uOP;
 
 typedef struct packed {
-    
+    logic[$clog2(NUM_PREGS)-1:0] src1_index,
+    logic[$clog2(NUM_PREGS)-1:0] src2_index,
 } Sel_uOP;
 
 typedef struct packed {
-    
+    logic [31:0] src1_val,
+    logic [31:0] src2_val,
 } Ex_uOP;
 
+
+typedef enum logic {
+    REG_FILE,
+    BYPASS
+} bypass_mux;
 endpackage
