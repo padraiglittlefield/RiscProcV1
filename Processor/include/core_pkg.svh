@@ -35,16 +35,66 @@ typedef struct packed
 typedef struct packed {
     logic[$clog2(NUM_PREGS)-1:0] src1_index,
     logic[$clog2(NUM_PREGS)-1:0] src2_index,
+    logic [31:0] imm_val;
+
 } Sel_uOP;
 
 typedef struct packed {
-    logic [31:0] src1_val,
-    logic [31:0] src2_val,
+    logic [31:0] src1_val, // Value of src1 supplied from RegRead
+    logic [31:0] src2_val, // Value of src2 supplied from RegRead
+    logic [31:0] ex_out,   // Result of exec, be it alu,mul,branch,etc
+    logic br_pred          // Was the branch taken?
+    logic br_mispred,      // Was the branch pred correct?
+    instr_opcode opcode,
+    logic is_branch
+
+
 } Ex_uOP;
 
 
-typedef enum logic {
+typedef enum {
     REG_FILE,
     BYPASS
 } bypass_mux;
+
+typedef enum {
+    ADD_I, 
+    SUB_I,     
+    AND_I,    
+    OR_I,      
+    XOR_I,    
+    SLT_I,    
+    SLTU_I,   
+    SRA_I,    
+    SRL_I,    
+    SLL_I,    
+    MUL_I,    
+    ADDI_I,    
+    ANDI_I,   
+    ORI_I,    
+    XORI_I,   
+    SLTI_I,   
+    SLTIU_I,  
+    SRAI_I,   
+    SRLI_I,   
+    SLLI_I,   
+    LUI_I,    
+    AUIPC_I,  
+    LW_I,     
+    SW_I,     
+    JAL_I,    
+    JR_I,     
+    JALR_I,   
+    BEQ_I,    
+    BNE_I,    
+    BLT_I,    
+    BGE_I,    
+    BLTU_I,   
+    BGEU_I,   
+    CSRR_I,   
+    CSRW_I,   
+    CSR_I,    
+    INVALID_I
+} instr_opcode;
+
 endpackage
