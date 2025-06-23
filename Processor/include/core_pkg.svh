@@ -43,12 +43,12 @@ typedef struct packed {
     logic [31:0] src1_val, // Value of src1 supplied from RegRead
     logic [31:0] src2_val, // Value of src2 supplied from RegRead
     logic [31:0] ex_out,   // Result of exec, be it alu,mul,branch,etc
-    logic br_pred          // Was the branch taken?
-    logic br_mispred,      // Was the branch pred correct?
+    logic br_taken,        // Was the branch taken?
+    //logic br_mispred,    // Was the branch pred correct?
     instr_opcode opcode,
-    logic is_branch
-
-
+    logic is_branch,
+    logic alu_en,
+    logic mul_en
 } Ex_uOP;
 
 

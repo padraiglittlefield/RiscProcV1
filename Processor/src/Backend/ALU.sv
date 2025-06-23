@@ -1,6 +1,7 @@
 module ALU (
   input logic clk,
   input logic rst,
+  input logic alu_en,
   input instr_opcode opcode,
   input [31:0] val1,
   input [31:0] val2,
