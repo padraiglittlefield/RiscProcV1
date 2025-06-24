@@ -12,12 +12,12 @@ interface ExecutePhysRegFileIF;
     logic [$clog2(NUM_PREGS)-1:0] ex_dst_index;
 
     modport Execute (
-        output ex_vald, ex_dst_val, ex_dst_index
+        output ex_valid, ex_dst_val, ex_dst_index
         
     );
 
     modport PhysRegFile (
-        input ex_vald, ex_dst_val, ex_dst_index
+        input ex_valid, ex_dst_val, ex_dst_index
     );
 
 endinterface

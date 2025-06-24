@@ -21,10 +21,12 @@ typedef enum logic[3:0]
 } MemC_Cmd /* public */;
 
 
-
-parameter NUM_FUS = 4
-parameter RS_ENTRIES = 8
-parameter NUM_PREGS = 128
+/* Processor Parameters */
+parameter NUM_FUS       = 4
+parameter RS_ENTRIES    = 8
+parameter NUM_PREGS     = 128
+parameter NUM_AREGS     = 32
+parameter NUM_ROB_ENTS  = 64
 
 
 typedef struct packed
@@ -40,16 +42,23 @@ typedef struct packed {
 } Sel_uOP;
 
 typedef struct packed {
-    logic [31:0] src1_val, // Value of src1 supplied from RegRead
-    logic [31:0] src2_val, // Value of src2 supplied from RegRead
-    logic [31:0] ex_out,   // Result of exec, be it alu,mul,branch,etc
-    logic br_taken,        // Was the branch taken?
-    //logic br_mispred,    // Was the branch pred correct?
-    instr_opcode opcode,
-    logic is_branch,
-    logic alu_en,
-    logic mul_en
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg,      //Destination Preg
+    logic [31:0] src1_val,                      // Value of src1 supplied from RegRead
+    logic [31:0] src2_val,                      // Value of src2 supplied from RegRead
+    logic [31:0] ex_out,                        // Result of exec, be it alu,mul,branch,etc
+    logic br_taken,                             // Was the branch taken?
+    //logic br_mispred,                         // Was the branch pred correct?
+    instr_opcode opcode,                        // Instr opcode
+    logic is_branch,                            // Is this a branch instr
+    logic alu_en,                               // ALU instr?
+    logic mul_en,                               // Mul instr?
+    logic agu_en,                               // MMU instr?
+    logic [$clog2(NUM_ROB_ENTS)-1:0] rob_index  // Index in ROB for State Update
 } Ex_uOP;
+
+typedef struct packed {
+    logic [$clog2(NUM_AREGS)-1:0]
+} ROB_Entry;
 
 
 typedef enum {
