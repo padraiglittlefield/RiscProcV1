@@ -10,16 +10,26 @@ module ROB #(
 // Declare Entry Ready DS
 
 // Retire < Retire Width Instructions Sequentially
-logic [2:0] retire_pointer;
-always@(posedge clk) begin
-    if(rst) begin
-        retire_pointer = 2'b00;
-    end else begin
-
-    end
-end
 
 // Declare 4-FIFOs 
+
+genvar i;
+generate 
+for (i = 0; i < 4; i++) begin
+    FIFO #(
+        .DEPTH(NUM_ROB_ENTS/4)
+    ) ROB_Queue (
+        .clk(clk),
+        .rst(rst),
+        .w_en(),
+        .r_en(),
+        .data_in()
+        .data_out(),
+        .full(),
+        .empty()
+    );
+end
+endgenerate
 
 // Conenct FIFO Write to Dispatch 
 

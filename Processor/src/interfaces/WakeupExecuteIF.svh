@@ -13,7 +13,7 @@ interface WakeupExecuteIF;
     */
 
     logic free_en;
-    logic [$clog2(RS_ENTRIES)] free_index;
+    logic [$clog2(RS_ENTRIES)-1:0] free_index;
 
     modport Wakeup (
       input free_en, free_index

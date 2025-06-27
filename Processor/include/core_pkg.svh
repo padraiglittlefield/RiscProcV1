@@ -53,7 +53,8 @@ typedef struct packed {
     logic alu_en,                               // ALU instr?
     logic mul_en,                               // Mul instr?
     logic agu_en,                               // MMU instr?
-    logic [$clog2(NUM_ROB_ENTS)-1:0] rob_index  // Index in ROB for State Update
+    logic [$clog2(NUM_ROB_ENTS)-1:0] rob_index, // Index in ROB for State Update
+    logic [$clog2(RS_ENTRIES)-1:0] rs_entry_index
 } Ex_uOP;
 
 typedef struct packed {

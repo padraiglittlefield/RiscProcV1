@@ -78,7 +78,8 @@ assign w_en = dispatch_valid & entry_free;  // Only write when both the dispatch
 assign wakeupDispatch.entry_free = !empty;
 assign wakeupDispatch.entry_index = w_row_index;
 
-// TODO: Still need to connect free_en and free_entry to something
+
+// FIFO to store the currently free entires of the reservation station. 
 FIFO #(
     .DEPTH(NUM_FUS)
     ) FreeEntryQueue (
@@ -101,11 +102,12 @@ FIFO #(
     - The shift register is loaded on the allocation of a entry with the latency of its dependency
         - TODO: Fix later:
             1. How do we know which latency was related to the most recently selected instruction
-            2. How to handle replay logic on the selection of Loads as their latency is not guarenteed
+            2. How to handle replay logic on the selection of Loads as their latency is not guarenteed 
+                \------> Probably just don't speculatively wakeup memory instructions as their latencies are so variable
+                
 */
 
 logic entry_ready [(NUM_ROWS-1):0];
-logic selected [(NUM_ROWS-1):0];
 logic [NUM_ROWS-1:0] request_vector;
 genvar j;
 generate
@@ -127,7 +129,8 @@ generate
     end
 endgenerate
 
-//TODO: Need to add a way to free entries, as well as setting and clearing the selected reg
+// Keep track of RS-Statiosn that have already been selected to avoid clogging 
+logic selected [(NUM_ROWS-1):0];
 always@(posedge clk) begin
     if(rst) begin
         selected = '0;

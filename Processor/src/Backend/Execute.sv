@@ -1,14 +1,15 @@
 module Execute #(
     parameter int NUM_EX_PIPES = 4,
-    parameter int NUM_WB_PIPES = 4,
+    parameter int NUM_WB_PIPES = 3,
     parameter int NUM_SU_PIPES = 3
 )(
     input logic clk,
     input logic rst,
     RegReadExecuteIF.Execute rr_pipes[NUM_EX_PIPES],           // Register Read Pipes
     ExecutePhysRegFileIF.Execute wb_pipes[NUM_WB_PIPES],       // Phys Reg WB / Bypass Pipes
-    ExecuteROBIF.Execute su_pipes[NUM_SU_PIPES]                // State Update (ROB Update) Pipes
-
+    ExecuteROBIF.Execute su_pipes[NUM_SU_PIPES],               // State Update (ROB Update) Pipes
+    WakeupExecuteIF.Execute rs_pipes [NUM_SU_PIPES],           // Freeing Entries in the Scheduler
+    ExecuteMMUIF.Execute mem_pipe,
 );
 
 // Collect uOP from the RR pipes
@@ -19,6 +20,7 @@ end
 
 // ***Execute Pipe 1 & 2 (ALU-1)***
 logic [1:0] br_cond;
+logic [1:0] aluout_valid;
 for (genvar i = 0; i < 2; i++) begin : gen_alu
     ALU alu (
         .clk(clk),
@@ -28,12 +30,15 @@ for (genvar i = 0; i < 2; i++) begin : gen_alu
         .val1(ex_pipe_uop[i].src1_val),
         .val2(ex_pipe_uop[i].src2_val),
         .aluout(wb_pipes[i].ex_dst_val),
-        .aluout_valid(wb_pipes[i].ex_valid),
+        .aluout_valid(aluout_valid[i]),
         .br_cond(br_cond[i])
     );
 
+    assign wb_pipes[i].ex_valid = aluout_valid[i];
     assign su_pipes[i].br_mispred   = br_cond[i] ^ ex_pipe_uop[i].br_taken;
     assign wb_pipes[i].ex_dst_index = ex_pipe_uop[i].dst_reg;
+    assign rs_pipes[i].free_entry = ex_pipe_uop[i].rs_entry_index;
+    assign rs_pipes[i].free_en = aluout_valid[i];
 end
 
 
@@ -49,9 +54,7 @@ end
 
     4. mulhsu rd, rs1, rs2 → signed rs1 × unsigned rs2 high
 */
-/*TODO: MUL is different because of the delayed nature (3 cycles) 
-    - Where does the rest of the instr information go during the 3-cycles? (need payload of sorts)
-*/
+
 logic [31:0] mul_out_hi;
 logic [31:0] mul_out_lo;
 logic mul_out_valid;
@@ -85,6 +88,8 @@ end
 assign wb_pipes[2].ex_dst_val   = mul_out_lo;
 assign wb_pipes[2].ex_valid     = mul_out_valid;
 assign wb_pipes[2].ex_dst_index = mul_stage3.dst_reg;
+assign rs_pipes[2].free_entry = mul_stage3.rs_entry_index;
+assign rs_pipes[2].free_en = mul_out_valid;
 
 
 // ***Execute Pipe 4 (AGU+MMU)***
@@ -101,9 +106,8 @@ AGU agu (
     .result(agu_result)
 );
 
-assign wb_pipes[3].ex_dst_val   = agu_result;
-assign wb_pipes[3].ex_valid     = agu_valid;
-assign wb_pipes[3].ex_dst_index = ex_pipe_uop[3].dst_reg;
+assign mem_pipe.addr_valid = agu_valid;
+assign mem_pipe.mem_addr = mem_addr;
 
 endmodule
 

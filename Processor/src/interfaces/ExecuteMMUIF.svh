@@ -7,16 +7,15 @@ import CORE_PKG::*;
 
 interface ExecuteMMUIF;
 
-
-
+    logic addr_valid;
+    logic [31:0] mem_addr
+    
     modport Execute (
-        input _,
-        output _,
+        output addr_valid, mem_addr
     );
 
     modport MMU (
-      input _, 
-      output _,
+      input addr_valid, mem_addr
     );
 
 endinterface
