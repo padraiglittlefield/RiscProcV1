@@ -1,3 +1,5 @@
+ import CORE_PKG::*;
+ 
 module ALU (
   input logic clk,
   input logic rst,

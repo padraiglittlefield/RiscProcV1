@@ -1,3 +1,4 @@
+import CORE_PKG::*;
 module Execute #(
     parameter int NUM_EX_PIPES = 4,
     parameter int NUM_WB_PIPES = 3,

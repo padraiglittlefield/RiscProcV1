@@ -1,5 +1,4 @@
-import CORE_PKG::*
-
+import CORE_PKG::*;
 
 module Select #(
 

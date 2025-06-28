@@ -1,24 +1,27 @@
+import CORE_PKG::*;
+
 module ROB #(
     parameter RETIRE_WIDTH = 2
 )(
     input clk,
     input rst,
+    ExecuteROBIF.ROB execute,
+    DispatchROBIF.ROB dispatch
 
 );
 
-localparam RETIRE_WIDTH_BITS = $clog(RETIRE_WIDTH);
+localparam RETIRE_WIDTH_BITS = $clog2(RETIRE_WIDTH);
+localparam RS_ENTRIES_BITS = $clog2(RS_ENTRIES);
 
 // Declare Entry Ready DS
 logic [RETIRE_WIDTH-1:0] fifo_rd_en;
-logic [63:0] rob_entry_ready;               // Flattened 2-D Bit Matrix
+logic [RS_ENTRIES-1:0] rob_entry_ready;               // Flattened 2-D Bit Matrix
 
-
-// Retire < Retire Width Instructions Sequentially
 
 logic [RETIRE_WIDTH_BITS-1:0] col;        // Used for determining correct r_en for the fifos
 logic [RETIRE_WIDTH_BITS-1:0] num_reads;  // Counts the num of reads for determining which 
-logic [5:0] rd_ptr;
-logic [5:0] curr_idx, prev_idx;
+logic [RS_ENTRIES_BITS-1:0] rd_ptr;
+logic [RS_ENTRIES_BITS-1:0] curr_idx, prev_idx;
 
 // Determine which instructions we can retire
 always @(posedge clk) begin
@@ -48,22 +51,20 @@ always @(posedge clk) begin
     rd_ptr += num_reads;
 end
 
-
-
 // Declare 4-FIFOs 
-
+ROB_Entry [RETIRE_WIDTH_BITS-1:0] rob_entry_row;
 genvar i;
 generate 
-for (i = 0; i < 4; i++) begin
+for (i = 0; i < RETIRE_WIDTH; i++) begin
     FIFO #(
-        .DEPTH(NUM_ROB_ENTS/4)
+        .DEPTH(NUM_ROB_ENTS/RETIRE_WIDTH)
     ) ROB_Queue (
         .clk(clk),
         .rst(rst),
         .w_en(),
         .r_en(fifo_rd_en[i]),
-        .data_in()
-        .data_out(),
+        .data_in(),
+        .data_out(rob_entry_row[i]),
         .full(),
         .empty()
     );
@@ -76,8 +77,4 @@ endgenerate
 // Connect Exectue to this 
 
 // Write Results to A-REG
-
-
-
-
 endmodule

@@ -1,3 +1,5 @@
+import CORE_PKG::*;
+
 module AGU (
     input logic rst,
     input logic [31:0] src1,

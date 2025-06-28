@@ -18,7 +18,7 @@ interface ROBExecuteIF;
 
     modport Execute (
         input _,
-        output br_mispred,
+        output br_mispred, entry_index
     );
 
 endinterface

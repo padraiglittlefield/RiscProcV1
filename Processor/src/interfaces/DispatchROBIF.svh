@@ -1,5 +1,5 @@
 /*
-    Interface between Dispatch and Wakeup
+    Interface between Dispatch and ROB
 */
 `ifndef DISP_ROB_IF
 `define DISP_ROB_IF

@@ -1,4 +1,4 @@
- import CORE_PKG::*;
+import CORE_PKG::*;
 `include wakeup_dispatch_if.svh 
 `include wakeup_select_if.svh
 
