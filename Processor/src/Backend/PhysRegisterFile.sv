@@ -1,5 +1,5 @@
 import CORE_PKG::*
-module PhysicalRegisterFile (
+module PhysRegisterFile (
     /*
         Physical Register File
             - Holds the PREGS for renaming purposes and such. 8-Read ports means that this
@@ -25,7 +25,7 @@ always@(posedge clk) begin
         end
     end else begin
         for(int i = 0; i < NUM_EX_PIPES; i++) begin
-            if(ex_pipes[i].ex_vald) begin
+            if(ex_pipes[i].ex_valid) begin
                 phys_reg_file[ex_pipes[i].ex_dst_index] <= ex_pipes[i].ex_dst_val;
             end
         end

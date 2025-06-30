@@ -27,6 +27,7 @@ parameter RS_ENTRIES    = 8
 parameter NUM_PREGS     = 128
 parameter NUM_AREGS     = 32
 parameter NUM_ROB_ENTS  = 64
+parameter RETIRE_WIDTH  = 4
 
 
 typedef struct packed
@@ -58,7 +59,11 @@ typedef struct packed {
 } Ex_uOP;
 
 typedef struct packed {
-    logic [$clog2(NUM_AREGS)-1:0]
+    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
+    //logic [31:0] val, ->Stored with Ready-bit matrix now 
+    logic exception,
+    logic br_mispred,
+    logic [31:0] pc
 } ROB_Entry;
 
 

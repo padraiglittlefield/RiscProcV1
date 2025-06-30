@@ -22,6 +22,8 @@ end
 // ***Execute Pipe 1 & 2 (ALU-1)***
 logic [1:0] br_cond;
 logic [1:0] aluout_valid;
+logic [31:0] aluout [1:0];
+
 for (genvar i = 0; i < 2; i++) begin : gen_alu
     ALU alu (
         .clk(clk),
@@ -30,16 +32,23 @@ for (genvar i = 0; i < 2; i++) begin : gen_alu
         .opcode(ex_pipe_uop[i].opcode),
         .val1(ex_pipe_uop[i].src1_val),
         .val2(ex_pipe_uop[i].src2_val),
-        .aluout(wb_pipes[i].ex_dst_val),
+        .aluout(aluout[i]),
         .aluout_valid(aluout_valid[i]),
         .br_cond(br_cond[i])
     );
 
-    assign wb_pipes[i].ex_valid = aluout_valid[i];
-    assign su_pipes[i].br_mispred   = br_cond[i] ^ ex_pipe_uop[i].br_taken;
+    assign wb_pipes[i].ex_valid     = aluout_valid[i];
     assign wb_pipes[i].ex_dst_index = ex_pipe_uop[i].dst_reg;
-    assign rs_pipes[i].free_entry = ex_pipe_uop[i].rs_entry_index;
-    assign rs_pipes[i].free_en = aluout_valid[i];
+    assign wb_pipes[i].ex_dst_val   = aluout[i];
+
+    assign su_pipes[i].ex_valid     = aluout_valid[i];
+    assign su_pipes[i].ex_val       = aluout[i];
+    assign su_pipes[i].br_mispred   = br_cond[i] ^ ex_pipe_uop[i].br_taken;
+    assign su_pipes[i].entry_index  = ex_pipe_uop[i].rob_index;
+    assign su_pipes[i].exception    = 1'b0; // do more with this later 
+
+    assign rs_pipes[i].free_entry   = ex_pipe_uop[i].rs_entry_index;
+    assign rs_pipes[i].free_en      = aluout_valid[i];
 end
 
 
@@ -86,11 +95,16 @@ always_ff @(posedge clk or posedge rst) begin
 end
 //TODO: Add logic here to figure out what to set the output of the mul based on the opcode (need to finish decode first)
 
-assign wb_pipes[2].ex_dst_val   = mul_out_lo;
 assign wb_pipes[2].ex_valid     = mul_out_valid;
+assign wb_pipes[2].ex_dst_val   = mul_out_lo;
 assign wb_pipes[2].ex_dst_index = mul_stage3.dst_reg;
-assign rs_pipes[2].free_entry = mul_stage3.rs_entry_index;
-assign rs_pipes[2].free_en = mul_out_valid;
+assign rs_pipes[2].free_entry   = mul_stage3.rs_entry_index;
+assign rs_pipes[2].free_en      = mul_out_valid;
+
+assign su_pipes[2].ex_valid     = mul_out_valid;
+assign su_pipes[2].ex_val       = mul_out_lo; 
+assign su_pipes[2].entry_index  = mul_stage3.rob_index;
+assign su_pipes[2].exception    = 1'b0; // do more with this later 
 
 
 // ***Execute Pipe 4 (AGU+MMU)***

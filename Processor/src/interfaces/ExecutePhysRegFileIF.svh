@@ -1,8 +1,8 @@
 /*
-    Interface between Dispatch and Wakeup
+    Interface between Execute and the Physical Regfile
 */
-`ifndef EXECUTEs_REG_FILE_IF
-`define EXECUTEs_REG_FILE_IF
+`ifndef EXECUTE_REG_FILE_IF
+`define EXECUTE_REG_FILE_IF
 import CORE_PKG::*;
 
 interface ExecutePhysRegFileIF;
