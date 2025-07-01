@@ -64,7 +64,7 @@ genvar j;
 generate 
 for (j = 0; j < RETIRE_WIDTH; j++) begin
     FIFO #(
-        .DEPTH(NUM_ROB_ENTS/RETIRE_WIDTH)
+        .DEPTH(NUM_ROB_ENTS/RETIRE_WIDTH) //TODO: Need to fix the data in sizing
     ) ROB_Queue (
         .clk(clk),
         .rst(rst),

@@ -20,58 +20,6 @@ typedef enum logic[3:0]
     MEMC_WRITE_WORD
 } MemC_Cmd /* public */;
 
-
-/* Processor Parameters */
-parameter NUM_FUS       = 4
-parameter RS_ENTRIES    = 8
-parameter NUM_PREGS     = 128
-parameter NUM_AREGS     = 32
-parameter NUM_ROB_ENTS  = 64
-parameter RETIRE_WIDTH  = 4
-
-
-typedef struct packed
-{
-
-} Disp_uOP;
-
-typedef struct packed {
-    logic[$clog2(NUM_PREGS)-1:0] src1_index,
-    logic[$clog2(NUM_PREGS)-1:0] src2_index,
-    logic [31:0] imm_val;
-
-} Sel_uOP;
-
-typedef struct packed {
-    logic [$clog2(NUM_PREGS)-1:0] dst_preg,      //Destination Preg
-    logic [31:0] src1_val,                      // Value of src1 supplied from RegRead
-    logic [31:0] src2_val,                      // Value of src2 supplied from RegRead
-    logic [31:0] ex_out,                        // Result of exec, be it alu,mul,branch,etc
-    logic br_taken,                             // Was the branch taken?
-    //logic br_mispred,                         // Was the branch pred correct?
-    instr_opcode opcode,                        // Instr opcode
-    logic is_branch,                            // Is this a branch instr
-    logic alu_en,                               // ALU instr?
-    logic mul_en,                               // Mul instr?
-    logic agu_en,                               // MMU instr?
-    logic [$clog2(NUM_ROB_ENTS)-1:0] rob_index, // Index in ROB for State Update
-    logic [$clog2(RS_ENTRIES)-1:0] rs_entry_index
-} Ex_uOP;
-
-typedef struct packed {
-    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
-    //logic [31:0] val, ->Stored with Ready-bit matrix now 
-    logic exception,
-    logic br_mispred,
-    logic [31:0] pc
-} ROB_Entry;
-
-
-typedef enum {
-    REG_FILE,
-    BYPASS
-} bypass_mux;
-
 typedef enum {
     ADD_I, 
     SUB_I,     
@@ -111,5 +59,58 @@ typedef enum {
     CSR_I,    
     INVALID_I
 } instr_opcode;
+
+/* Processor Parameters */
+parameter NUM_FUS       = 4
+parameter RS_ENTRIES    = 8
+parameter NUM_PREGS     = 128
+parameter NUM_AREGS     = 32
+parameter NUM_ROB_ENTS  = 64
+parameter RETIRE_WIDTH  = 4
+parameter DISP_WIDTH    = 2
+
+typedef struct packed
+{
+    logic [31:0] pc,
+    logic [$clog2(NUM_AREGS)-1:0] dst_reg, 
+} Disp_uOP;
+
+typedef struct packed {
+    logic[$clog2(NUM_PREGS)-1:0] src1_index,
+    logic[$clog2(NUM_PREGS)-1:0] src2_index,
+    logic [31:0] imm_val;
+
+} Sel_uOP;
+
+typedef struct packed {
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg,      //Destination Preg
+    logic [31:0] src1_val,                      // Value of src1 supplied from RegRead
+    logic [31:0] src2_val,                      // Value of src2 supplied from RegRead
+    logic [31:0] ex_out,                        // Result of exec, be it alu,mul,branch,etc
+    logic br_taken,                             // Was the branch taken?
+    //logic br_mispred,                         // Was the branch pred correct?
+    instr_opcode opcode,                        // Instr opcode
+    logic is_branch,                            // Is this a branch instr
+    logic alu_en,                               // ALU instr?
+    logic mul_en,                               // Mul instr?
+    logic agu_en,                               // MMU instr?
+    logic [$clog2(NUM_ROB_ENTS)-1:0] rob_index, // Index in ROB for State Update
+    logic [$clog2(RS_ENTRIES)-1:0] rs_entry_index
+} Ex_uOP;
+
+typedef struct packed {
+    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
+    //logic [31:0] val, ->Stored with Ready-bit matrix now 
+    logic exception,
+    logic br_mispred,
+    logic [31:0] pc
+} ROB_Entry;
+
+
+typedef enum {
+    REG_FILE,
+    BYPASS
+} bypass_mux;
+
 
 endpackage
