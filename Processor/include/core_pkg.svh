@@ -60,6 +60,15 @@ typedef enum {
     INVALID_I
 } instr_opcode;
 
+
+typedef enum { 
+    ALU_LOWER,
+    ALU_UPPER,
+    MUL,
+    LSU
+} ex_pipe;
+
+
 /* Processor Parameters */
 parameter NUM_FUS       = 4
 parameter RS_ENTRIES    = 8
@@ -69,10 +78,13 @@ parameter NUM_ROB_ENTS  = 64
 parameter RETIRE_WIDTH  = 4
 parameter DISP_WIDTH    = 2
 
-typedef struct packed
-{
+typedef struct packed {
+    ex_pipe ex_pipe_dst,
     logic [31:0] pc,
-    logic [$clog2(NUM_AREGS)-1:0] dst_reg, 
+    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
+
+
+
 } Disp_uOP;
 
 typedef struct packed {
