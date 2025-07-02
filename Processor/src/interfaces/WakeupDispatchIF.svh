@@ -6,12 +6,12 @@
 import CORE_PKG::*;
 
 interface WakeupDispatchIF;
-
+    localparam RS_IDX_WIDTH = $clog2(RS_ENTRIES)
     localparam FU_IDX_WIDTH  = $clog2(NUM_FUS);
     localparam COL_IDX_WIDTH = $clog2(NUM_COLS);
     
     logic entry_free;       // Whether or not there is room in the entry queue for another instructions
-    logic entry_index;      // The index of the free entry
+    logic [RS_IDX_WDTH-1:0] entry_index;      // The index of the free entry
     logic dispatch_valid;   // Whether or not dispatch instruction is valid
     logic latency;
     logic src1_dp_en;      // Is src 1 waiting on an instruction to finish

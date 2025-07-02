@@ -2,6 +2,10 @@ import CORE_PKG::*;
 `include wakeup_dispatch_if.svh 
 `include wakeup_select_if.svh
 
+/*TODOTODO: Connect the memory unit to this similar to how execute is to clear instructions waiting
+when an instruction finish
+
+*/
 
 module WakeupLogic#(
     
@@ -18,6 +22,7 @@ module WakeupLogic#(
 
 localparam NUM_ROWS = RS_ENTRIES;
 localparam NUM_COLS = RS_ENTRIES;
+localparam RS_IDX_WDTH = $clog2(RS_ENTRIES)
 
 logic [(NUM_ROWS * NUM_FUS)-1:0] ready_vector;  
 //logic [NUM_ROWS-1:0] entry_ready [0:NUM_FUS-1]; 
@@ -82,7 +87,7 @@ assign wakeupDispatch.entry_index = w_row_index;
 
 // FIFO to store the currently free entires of the reservation station. 
 FIFO #(
-    .DEPTH(NUM_FUS)
+    .DEPTH(NUM_FUS) //TODO: Add a way to include the size of the memory
     ) FreeEntryQueue (
     .clk(clk),
     .rst(rst),

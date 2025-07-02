@@ -7,11 +7,15 @@ module Dispatch #(
     input rst,
     input stall.
     RenameDispatchIF.Dispatch RenameIF[DISP_WIDTH],
-    DispatchSelectIF.Dispatch SelectIF[DISP_WIDTH],
     DispatchROBIF.Dispatch ROBIF[DISP_WIDTH],
+    DispatchSelectIF.Dispatch SelectIF[NUM_FUS],
     WakeupDispatchIF.Dispatch WakeupIF[NUM_FUS]
 
 );
+
+localparam RS_IDX_WIDTH = $clog2(RS_ENTRIES)
+
+
 
 /* IMPROVEMENTS
 Dispatch is currently bottlenecked by the number of execution pipes, which in turn is bottlenecked by concerns with the register file.
@@ -37,8 +41,7 @@ generate
         assign ex_pipe_dst[i] = RenameIF[i].instr_uop.ex_pipe_dst;
         assign stall_queue = stall & collision_stall;
 
-        // only dispatch if there are no stalls and there is a free rs in the target ex_pipe
-        assign disp_en[i] = ~stall_queue & WakeupIF[ex_pipe_dst[i]].entry_free;
+        assign disp_en[i] = ~stall_queue & WakeupIF[ex_pipe_dst[i]].entry_free; // only dispatch if there are no stalls and there is a free rs in the target ex_pipe 
 
         FIFO #(
             .DEPTH() // TODO: Correct depth and add data sizing parameter somehow
@@ -90,22 +93,62 @@ always@(posedge clk) begin
 end
 
 
-/* Dependency Mapping Alias Table
+/* Dependency Mapping Table 
+    - Similar to a RAT sadly, hopefully a way to combine them
     - Contains the Reservation Station (RS) locations ({7:4->FU_INDEX, 3:0->COL_INDEX}) of 
     a dependent instruction
+    - Need to read it to dispatch an instr and write to it after dispatching one
 */
+logic [(FU_IDX_WIDTH + COL_IDX_WIDTH)-1:0] DMT [NUM_PREGS-1:0];
 
+
+
+
+logic [(FU_IDX_WIDTH + COL_IDX_WIDTH)-1:0] dst_dp_loc;
+genvar k;
+generate
+
+    
+    assign dst_dp_loc = {,}
+endgenerate
+
+
+
+// Writing to translation
+always@(posedge clk) begin : write_dmt
+    if(rst) begin
+        for(int i = 0; i<NUM_PREGS;i++) begin
+            DMT[i] <= '0;
+        end
+    end else begin
+        DMT[dst_preg] <= ;
+    end
+end
 
 
 /*  Reservation Station (Wakeup) Entry Allocation
     - Entries are allocated in wakeup on being dispatched
 */
 
+//ex_pipe_dst[i]  
+
+logic[RS_IDX_WIDTH-1:0] entry_index [1:0]; // The RS entry that is free 
 genvar j;
 generate
-    for (j = 0; j < DISP_WIDTH; j++) begin
-        //disp_uop_out[i]
-        //disp_en[j]
+    for (j = 0; j < DISP_WIDTH; j++) begin : assign_rs_entry
+
+        assign entry_index[j] = WakeupIF[ex_pipe_dst[j]].entry_index; //used for 
+        
+        if(disp_en[j]) begin    // ensures the dispatch is valid and there is an available entry
+            assign WakeupIF[ex_pipe_dst[j]].dispatch_valid = 1'b1;
+            assign WakeupIF[ex_pipe_dst[j]].latency_in = ex_pipe_dst[j] != LSU ? disp_uop_out[j].latency : '1;
+            
+            assign WakeupIF[ex_pipe_dst[j]].src1_dp_en = disp_uop_out[j].src1_dp_en;
+            assign WakeupIF[ex_pipe_dst[j]].src1_dp_loc = disp_uop_out[j].src1_dp_en;
+            
+            assign WakeupIF[ex_pipe_dst[j]].src2_dp_loc = disp_uop_out[j].src2_dp_en;
+            assign WakeupIF[ex_pipe_dst[j]].src2_dp_en = disp_uop_out[j].src2_dp_en;
+        end
     end
 endgenerate
 
@@ -116,7 +159,7 @@ endgenerate
     - Instructions are dumped to the payload on being dispatched
 */
 
-
+// use entry_index[i] and ex_pipe_dst[i] to index into a selects payload
 
 
 

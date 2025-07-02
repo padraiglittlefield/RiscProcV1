@@ -79,10 +79,17 @@ parameter RETIRE_WIDTH  = 4
 parameter DISP_WIDTH    = 2
 
 typedef struct packed {
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg,     //Destination Preg 
+    logic[$clog2(NUM_PREGS)-1:0] src1_index,
+    logic[$clog2(NUM_PREGS)-1:0] src2_index,
+    logic [31:0] imm_val,
+    
     ex_pipe ex_pipe_dst,
     logic [31:0] pc,
     logic [$clog2(NUM_AREGS)-1:0] dst_reg,
     logic [8:0] latency,
+    logic src1_dp_en,
+    logic src2_dp_en,
 
 
 } Disp_uOP;
@@ -95,7 +102,7 @@ typedef struct packed {
 } Sel_uOP;
 
 typedef struct packed {
-    logic [$clog2(NUM_PREGS)-1:0] dst_preg,      //Destination Preg
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg,     //Destination Preg
     logic [31:0] src1_val,                      // Value of src1 supplied from RegRead
     logic [31:0] src2_val,                      // Value of src2 supplied from RegRead
     logic [31:0] ex_out,                        // Result of exec, be it alu,mul,branch,etc
