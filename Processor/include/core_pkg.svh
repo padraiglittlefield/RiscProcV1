@@ -82,7 +82,7 @@ typedef struct packed {
     ex_pipe ex_pipe_dst,
     logic [31:0] pc,
     logic [$clog2(NUM_AREGS)-1:0] dst_reg,
-
+    logic [8:0] latency,
 
 
 } Disp_uOP;

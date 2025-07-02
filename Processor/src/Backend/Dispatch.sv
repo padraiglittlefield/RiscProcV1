@@ -89,16 +89,35 @@ always@(posedge clk) begin
     end
 end
 
+
+/* Dependency Mapping Alias Table
+    - Contains the Reservation Station (RS) locations ({7:4->FU_INDEX, 3:0->COL_INDEX}) of 
+    a dependent instruction
+*/
+
+
+
 /*  Reservation Station (Wakeup) Entry Allocation
     - Entries are allocated in wakeup on being dispatched
 */
 
-if(disp_en[i])
+genvar j;
+generate
+    for (j = 0; j < DISP_WIDTH; j++) begin
+        //disp_uop_out[i]
+        //disp_en[j]
+    end
+endgenerate
+
+
 
 
 /*  Payload (Select) Dump
     - Instructions are dumped to the payload on being dispatched
 */
+
+
+
 
 
 endmodule

@@ -54,6 +54,7 @@ endgenerate
 
 /* 
     Set Lines: [0 0 0 0] [0 0 0 0] [0 0 0 0] [0 0 0 0]
+    
     src1_dp_loc: {7:4->FU_INDEX, 3:0->COL_INDEX}
     Set Lines [(src1_dp_loc[7:4]<< $clog2(NUM_FUS)) + src1_dp_loc[3:0]] = 1;
 */
