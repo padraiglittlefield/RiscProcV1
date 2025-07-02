@@ -9,38 +9,51 @@ module Dispatch #(
     RenameDispatchIF.Dispatch RenameIF[DISP_WIDTH],
     DispatchSelectIF.Dispatch SelectIF[DISP_WIDTH],
     DispatchROBIF.Dispatch ROBIF[DISP_WIDTH],
-    WakeupDispatchIF.Dispatch WakeupIF[DISP_WIDTH]
+    WakeupDispatchIF.Dispatch WakeupIF[NUM_FUS]
 
 );
 
-/* FIX LATER 
+/* IMPROVEMENTS
 Dispatch is currently bottlenecked by the number of execution pipes, which in turn is bottlenecked by concerns with the register file.
 
     - In the next iteration, a more complex register file scheme (banked, split, whatever) needs to be devised to allow for more pipes
     - Additionally, hybrid pipes would be extremely useful here 
 
+
 */
 
+Disp_uOP disp_uop_out [1:0];
 
+logic stall_queue[DISP_WIDTH-1:0];
 /* Dispatch Queue
     - Stores renamed instructions that are waiting to be allocated in the Reservation Stations
 */
+logic [DISP_WIDTH-1:0] ex_pipe_dst;
+logic [DISP_WIDTH-1:0] disp_en;
 genvar i;
 generate
     for(i = 0; i < DISP_WIDTH; i++) begin
-    FIFO #(
-        .DEPTH() // TODO: Correct depth and add data sizing parameter somehow
-    ) Dispatch_Queue (
-        .clk(clk),
-        .rst(rst),
-        .w_en(RenameIF[i].instr_valid),
-        .r_en(),
-        .data_in(RenameIF[i].instr_uop),
-        .data_out(),
-        .full(RenameIF[i].queue_full),
-        .empty()
-    );
-end
+
+        assign ex_pipe_dst[i] = RenameIF[i].instr_uop.ex_pipe_dst;
+        assign stall_queue = stall & collision_stall;
+
+        // only dispatch if there are no stalls and there is a free rs in the target ex_pipe
+        assign disp_en[i] = ~stall_queue & WakeupIF[ex_pipe_dst[i]].entry_free;
+
+        FIFO #(
+            .DEPTH() // TODO: Correct depth and add data sizing parameter somehow
+        ) Dispatch_Queue (
+            .clk(clk),
+            .rst(rst),
+            .w_en(RenameIF[i].instr_valid),
+            .r_en(disp_en[i]),
+            .data_in(RenameIF[i].instr_uop),
+            .data_out(disp_uop_out[i]),
+            .full(RenameIF[i].queue_full),
+            .empty()
+        );
+
+    end
 endgenerate
 
 /* ROB Entry Allocation
@@ -60,28 +73,27 @@ end
         thrashing of a specific pipe
     - More advanced steering will need to be used in the futures
 */
-logic [1:0] stall_queue;
 logic stall_ptr;    
+logic [1:0] collision_stall;
 always@(posedge clk) begin
     if (rst) begin
         stall_ptr <= 1'b0;
     end else begin 
-        if(RenameIF[0].instr_uop.ex_pipe_dst == RenameIF[1].instr_uop.ex_pipe_dst) begin
-            stall_queue[stall_ptr] <= 1'b1;
-            stall_queue[~stall_ptr] <= 1'b0;
+        if(ex_pipe_dst[0] == ex_pipe_dst[1]) begin // This logic is not fully parameterizable but thats fine
+            collision_stall[stall_ptr] <= 1'b1;
+            collision_stall[~stall_ptr] <= 1'b0;
             stall_ptr <= ~stall_ptr;
         end else begin
-            stall_queue <= 2'b00;
+            collision_stall <= 2'b00;
         end
     end
 end
-
-
 
 /*  Reservation Station (Wakeup) Entry Allocation
     - Entries are allocated in wakeup on being dispatched
 */
 
+if(disp_en[i])
 
 
 /*  Payload (Select) Dump
