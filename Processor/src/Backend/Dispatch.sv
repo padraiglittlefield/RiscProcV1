@@ -16,6 +16,7 @@ module Dispatch #(
 localparam RS_IDX_WIDTH = $clog2(RS_ENTRIES)
 
 
+// TODO: Not sure if this needs to go in rename or dispatch but we need a way to check if a preg is ready or not
 
 /* IMPROVEMENTS
 Dispatch is currently bottlenecked by the number of execution pipes, which in turn is bottlenecked by concerns with the register file.

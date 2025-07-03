@@ -78,6 +78,15 @@ parameter NUM_ROB_ENTS  = 64
 parameter RETIRE_WIDTH  = 4
 parameter DISP_WIDTH    = 2
 parameter DISP_DEPTH    = 64
+parameter RENAME_WIDTH  = 2
+
+typedef struct packed {
+    
+} Decode_uOP;
+
+
+
+
 
 typedef struct packed {
     logic [$clog2(NUM_PREGS)-1:0] dst_preg,     //Destination Preg 

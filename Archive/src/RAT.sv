@@ -31,7 +31,7 @@ module RAT(
   end
   
 
-  // 
+
   // writing alias to the rat
   genvar k;
   generate  
