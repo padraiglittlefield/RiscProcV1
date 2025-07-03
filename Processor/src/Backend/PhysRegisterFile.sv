@@ -35,8 +35,8 @@ end
 genvar i;
 generate
     for(i = 0; i < NUM_EX_PIPES; i++) begin
-        assign rr_pipes[i].src1_val = phys_reg_file[rr_pipes[i].src1_index];
-        assign rr_pipes[i].src2_val = phys_reg_file[rr_pipes[i].src2_index]; 
+        assign rr_pipes[i].src1_val = phys_reg_file[rr_pipes[i].src1_reg];
+        assign rr_pipes[i].src2_val = phys_reg_file[rr_pipes[i].src2_reg]; 
     end
 endgenerate
 

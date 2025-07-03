@@ -113,8 +113,8 @@ logic [(FU_IDX_WIDTH + COL_IDX_WIDTH)-1:0] DMT [NUM_PREGS-1:0];
 genvar k;
 generate
     for (k = 0; k < DISP_WIDTH; k++) begin
-        src1_dp_loc[k] = DMT[disp_uop_out[i].src1_index];
-        src2_dp_loc[k] = DMT[disp_uop_out[i].src2_index];
+        src1_dp_loc[k] = DMT[disp_uop_out[i].src1_reg];
+        src2_dp_loc[k] = DMT[disp_uop_out[i].src2_reg];
     end
 endgenerate
 

@@ -81,7 +81,17 @@ parameter DISP_DEPTH    = 64
 parameter RENAME_WIDTH  = 2
 
 typedef struct packed {
-    
+    logic [$clog2(NUM_PREGS)-1:0] dst_reg,     //Destination Preg 
+    logic[$clog2(NUM_PREGS)-1:0] src1_reg,
+    logic[$clog2(NUM_PREGS)-1:0] src2_reg,
+    logic [31:0] imm_val,
+    logic instr_valid,
+    ex_pipe ex_pipe_dst,
+    logic [31:0] pc,
+    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
+    logic [8:0] latency,
+    logic src1_dp_en,
+    logic src2_dp_en,
 } Decode_uOP;
 
 
@@ -90,8 +100,8 @@ typedef struct packed {
 
 typedef struct packed {
     logic [$clog2(NUM_PREGS)-1:0] dst_preg,     //Destination Preg 
-    logic[$clog2(NUM_PREGS)-1:0] src1_index,
-    logic[$clog2(NUM_PREGS)-1:0] src2_index,
+    logic[$clog2(NUM_PREGS)-1:0] src1_reg,
+    logic[$clog2(NUM_PREGS)-1:0] src2_reg,
     logic [31:0] imm_val,
     
     ex_pipe ex_pipe_dst,
@@ -105,8 +115,8 @@ typedef struct packed {
 } Disp_uOP;
 
 typedef struct packed {
-    logic[$clog2(NUM_PREGS)-1:0] src1_index,
-    logic[$clog2(NUM_PREGS)-1:0] src2_index,
+    logic[$clog2(NUM_PREGS)-1:0] src1_reg,
+    logic[$clog2(NUM_PREGS)-1:0] src2_reg,
     logic [31:0] imm_val;
 
 } Sel_uOP;

@@ -10,8 +10,8 @@ module RegisterRead(
 
  src1_mux
 
-wire src1_index = selectIF.sel_uop.src1_index;
-wire src2_index = selectIF.sel_uop.src2_index;
+wire src1_reg = selectIF.sel_uop.src1_reg;
+wire src2_reg = selectIF.sel_uop.src2_reg;
 
 logic [1:0] bypass1_index;
 logic [1:0] bypass2_index;
@@ -20,8 +20,8 @@ bypass_mux src1_sel;
 bypass_mux src2_sel;
 
 // Connect to regfile
-regfileIF.src1_index = src1_index;
-regfileIF.src2_index = src2_index;
+regfileIF.src1_reg = src1_reg;
+regfileIF.src2_reg = src2_reg;
 
 // Check if any of the srcs match the bypasses dst
 always_comb begin : BypassNetwork
@@ -29,12 +29,12 @@ always_comb begin : BypassNetwork
     src2_sel = REG_FILE;
     for(int i =0; i < 4; i++) begin
         if(executeIF.execute_valid[i]) begin
-            if(executeIF.bypass_dst[i] == src1_index) begin
+            if(executeIF.bypass_dst[i] == src1_reg) begin
                 bypass1_index = i[1:0];
                 src1_sel = BYPASS;
             end
 
-            if(executeIF.bypass_dst[i] == src2_index) begin
+            if(executeIF.bypass_dst[i] == src2_reg) begin
                 bypass2_index = i[1:0];
                 src2_sel = BYPASS;
             end
