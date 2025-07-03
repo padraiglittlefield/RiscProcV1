@@ -1,7 +1,8 @@
 import CORE_PKG::*
 
 module FIFO #(
-    parameter DEPTH = 128
+    parameter DEPTH = 128,
+    parameter DATA_WIDITH = 8
     )(
     input logic clk,
     input logic rst,
@@ -15,7 +16,7 @@ module FIFO #(
 
 
 logic [$clog2(DEPTH):0] w_ptr, r_ptr;
-logic [($clog2(DEPTH))-1:0] queue[0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
+logic [DATA_WIDITH-1:0] queue[0:(1 << $clog2(DEPTH))-1];  // do the fancy rounding to a power of 2 basically
 logic empty_int; 
 logic full_or_empty;
 

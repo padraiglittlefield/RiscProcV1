@@ -87,8 +87,9 @@ assign wakeupDispatch.entry_index = w_row_index;
 
 // FIFO to store the currently free entires of the reservation station. 
 FIFO #(
-    .DEPTH(NUM_FUS) //TODO: Add a way to include the size of the memory
-    ) FreeEntryQueue (
+    .DEPTH(NUM_FUS),
+    .DATA_WIDTH($clog2(NUM_ROWS))
+) FreeEntryQueue (
     .clk(clk),
     .rst(rst),
     .w_en(wakeupExecute.free_en),

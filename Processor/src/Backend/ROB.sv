@@ -58,24 +58,25 @@ always @(posedge clk) begin
     rd_ptr += num_reads;
 end
 
-// Declare 4-FIFOs 
-ROB_Entry [RETIRE_WIDTH-1:0] rob_entry_row;
+// Declare Retire Width FIFOs 
 genvar j;
+ROB_Entry [RETIRE_WIDTH-1:0] rob_entry_row;
 generate 
-for (j = 0; j < RETIRE_WIDTH; j++) begin
-    FIFO #(
-        .DEPTH(NUM_ROB_ENTS/RETIRE_WIDTH) //TODO: Need to fix the data in sizing
-    ) ROB_Queue (
-        .clk(clk),
-        .rst(rst),
-        .w_en(),
-        .r_en(fifo_rd_en[j]),
-        .data_in(),
-        .data_out(rob_entry_row[j]),
-        .full(),
-        .empty()
-    );
-end
+    for (j = 0; j < RETIRE_WIDTH; j++) begin
+        FIFO #(
+            .DEPTH(NUM_ROB_ENTS/RETIRE_WIDTH),
+            .DATA_WIDTH($bits(ROB_Entry))
+        ) ROB_Queue (
+            .clk(clk),
+            .rst(rst),
+            .w_en(),
+            .r_en(fifo_rd_en[j]),
+            .data_in(),
+            .data_out(rob_entry_row[j]),
+            .full(),
+            .empty()
+        );
+    end
 endgenerate
 
 // Conenct FIFO Write to Dispatch 
