@@ -12,14 +12,15 @@ interface DispatchROBIF;
     //logic ROB Index //TODO: Add ROB Entry index for later when we need to index into it  
 
     modport Dispatch (
-      input _, 
-      output new_entry,
+        input rob_index, rob_full,
+        output new_entry, entry_valid
         
     );
 
     modport ROB (
-        input _,
-        output _,
+        input new_entry, entry_valid,
+        output rob_index, rob_full
+        
     );
 
 endinterface

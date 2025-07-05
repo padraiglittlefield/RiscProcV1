@@ -29,6 +29,7 @@ genvar i;
 generate
     for (i=0; i<RENAME_WIDTH;i++) begin
         
+        assign decode_uop[i] = DecodeIF[i].decode_uop;
         assign rename_valid[i] = decode_uop[i].instr_valid & ~no_free_pregs[i];
 
         // Reading Alias
@@ -49,10 +50,13 @@ generate
             assign dispatch_uop[i].src2_reg = renamed_src2[i]; 
         end
 
+
+
         assign bypassed_dst[i] = decode_uop[i].dst_reg;
-        assign bypassed_val[i] = renamed_dst_alias[i];
+        assign bypassed_alias[i] = renamed_dst_alias[i];
         assign bypass_valid[i] = rename_valid[i];
         
+        // Contains the Free Preg Queue for keeping track of which pregs are in use
         FIFO #(
             .DEPTH(NUM_PREGS/RENAME_WIDTH),
             .DATA_WIDTH($clog2(NUM_PREGS))
@@ -63,24 +67,30 @@ generate
             .r_en(rename_valid[i]),
             .data_in(), // todo: connect to ROB
             .data_out(renamed_dst_alias[i]),
-            .full(),
+            .full(),    // Not needed because if ROB is writing to it then a preg is in use
             .empty(no_free_pregs[i])
         );
 
-        
+        // Connect to Decode
+        assign DispIF[i].instr_uop = dispatch_uop[i];
+        assign DispIF[i].instr_valid = rename_valid[i];
+
     end
 endgenerate
 
 
 /* Writing new Alias to the RAT*/
+always @(posedge clk) begin
+    for(int i=0; i<RENAME_WIDTH; i++) begin
+        RatIF[i].w_en <= rename_valid[i];
+        RatIF[i].w_dst_areg <= decode_uop[i].dst_reg;;
+        RatIF[i].w_new_alias <= renamed_dst_alias[i];
+    end
+end
 
 
-// Contains the Free Preg Queue for keeping track of which pregs are in use
 
 
-/*
-    Laterncy Check
-*/
 
 
 endmodule

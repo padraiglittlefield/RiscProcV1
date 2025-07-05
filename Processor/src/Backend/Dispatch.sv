@@ -40,9 +40,9 @@ generate
     for(i = 0; i < DISP_WIDTH; i++) begin
 
         assign ex_pipe_dst[i] = RenameIF[i].instr_uop.ex_pipe_dst;
-        assign stall_queue = stall & collision_stall;
+        assign stall_queue[i] = stall & collision_stall[i];
 
-        assign disp_en[i] = ~stall_queue & WakeupIF[ex_pipe_dst[i]].entry_free; // only dispatch if there are no stalls and there is a free rs in the target ex_pipe 
+        assign disp_en[i] = ~stall_queue & WakeupIF[ex_pipe_dst[i]].entry_free & ~ROBIF[i].rob_full; // only dispatch if there are no stalls and there is a free rs in the target ex_pipe 
 
         FIFO #(
             .DEPTH(DISP_DEPTH/DISP_WIDTH),
@@ -66,11 +66,12 @@ endgenerate
     - ROB Entries are allocated in program order as soon as they enter the Dispatch Queue from Register Rename
 */
 ROB_Entry new_rob_entries[1:0];
-always_comb begin : ROB_Entry_Allocation
+always_comb begin
     for (int j = 0; j < DISP_WIDTH; j++) begin
-        new_rob_entries[j].dst_reg  = RenameIF[i].instr_uop.dst_reg; 
-        new_rob_entries[j].pc       = RenameIF[i].instr_uop.pc;
-        ROBIF[j].new_entry          =  new_rob_entries[j];
+        new_rob_entries[j].dst_reg  = RenameIF[j].instr_uop.dst_reg; 
+        new_rob_entries[j].pc       = RenameIF[j].instr_uop.pc;
+        ROBIF[j].new_entry          = new_rob_entries[j];
+        ROBIF[j].entry_valid        = RenameIF[j].instr_valid;
     end    
 end
 
@@ -113,8 +114,8 @@ logic [(FU_IDX_WIDTH + COL_IDX_WIDTH)-1:0] DMT [NUM_PREGS-1:0];
 genvar k;
 generate
     for (k = 0; k < DISP_WIDTH; k++) begin
-        src1_dp_loc[k] = DMT[disp_uop_out[i].src1_reg];
-        src2_dp_loc[k] = DMT[disp_uop_out[i].src2_reg];
+        src1_dp_loc[k] = DMT[disp_uop_out[k].src1_reg];
+        src2_dp_loc[k] = DMT[disp_uop_out[k].src2_reg];
     end
 endgenerate
 
@@ -140,22 +141,15 @@ end
 genvar j;
 logic[RS_IDX_WIDTH-1:0] entry_index [1:0]; // The RS entry that is free 
 generate
-    for (j = 0; j < DISP_WIDTH; j++) begin : assign_rs_entry
+    for (int j = 0; j < DISP_WIDTH; j++) begin
+        WakeupIF[ex_pipe_dst[j]].dispatch_valid = disp_en[j];
+        WakeupIF[ex_pipe_dst[j]].latency_in     = (ex_pipe_dst[j] != LSU) ? disp_uop_out[j].latency : '1;
 
-        assign entry_index[j] = WakeupIF[ex_pipe_dst[j]].entry_index; //used for 
-        
-        if(disp_en[j]) begin    // ensures the dispatch is valid and there is an available entry
-            assign WakeupIF[ex_pipe_dst[j]].dispatch_valid = 1'b1;
-            assign WakeupIF[ex_pipe_dst[j]].latency_in = ex_pipe_dst[j] != LSU ? disp_uop_out[j].latency : '1;
-            
-            assign WakeupIF[ex_pipe_dst[j]].src1_dp_en = disp_uop_out[j].src1_dp_en;
-            assign WakeupIF[ex_pipe_dst[j]].src1_dp_loc = src1_dp_loc[j];
-            
-            assign WakeupIF[ex_pipe_dst[j]].src2_dp_en = disp_uop_out[j].src2_dp_en;
-            assign WakeupIF[ex_pipe_dst[j]].src2_dp_loc = src2_dp_loc[j];
-        end
+        WakeupIF[ex_pipe_dst[j]].src1_dp_en     = disp_uop_out[j].src1_dp_en;
+        WakeupIF[ex_pipe_dst[j]].src1_dp_loc    = src1_dp_loc[j];
 
-        assign dst_dp_loc[j] = {ex_pipe_dst[j],entry_index[j]};
+        WakeupIF[ex_pipe_dst[j]].src2_dp_en     = disp_uop_out[j].src2_dp_en;
+        WakeupIF[ex_pipe_dst[j]].src2_dp_loc    = src2_dp_loc[j];
     end
 endgenerate
 
@@ -175,5 +169,19 @@ generate
         SelectIF[ex_pipe_dst[l]].payload_ram_index   = entry_index[l];
     end
 endgenerate    
+
+
+
+
+/*
+    Laterncy Check : 
+        TODO: We need to decide where to put latencies and ready bit checks
+    
+    */
+    //assign dispatch_uop[i].latency = decode_uop[i].latency;
+
+
+
+
 
 endmodule
