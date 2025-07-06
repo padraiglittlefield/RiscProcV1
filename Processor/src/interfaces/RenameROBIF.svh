@@ -7,14 +7,15 @@ import CORE_PKG::*;
 
 interface RenameROBIF;
 
+logic free_valid;
+logic [$clog2(NUM_PREGS)-1:0] preg_to_free;
+
 modport Rename (
-    input _,
-    output _
+    input preg_to_free, free_valid
 );
 
 modport ROB (
-    input _,
-    output _
+    output preg_to_free, free_valid
 );
 
 endinterface

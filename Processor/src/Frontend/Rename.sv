@@ -40,7 +40,11 @@ generate
         assign renamed_src2[i] = RatIf[i].preg_alias_out[1];
 
 
-        /*  Rename Bypassing */
+        /*  Rename Bypassing 
+            - Limitation: This only works for rename width == 2. More advanced bypassing logic will need to be 
+                developed
+        
+        */
         
         if(i != 0) begin
             assign dispatch_uop[i].src1_reg = (bypassed_dst[i-1] == decode_uop[i].src1_reg && bypass_valid[i-1])? bypassed_alias[i-1] : renamed_src1[i]; 
@@ -63,11 +67,11 @@ generate
         ) FreePregQueue (
             .clk(clk),
             .rst(rst),
-            .w_en(),    // todo: connect to ROB
+            .w_en(RobIF[i].free_valid),
             .r_en(rename_valid[i]),
-            .data_in(), // todo: connect to ROB
+            .data_in(RobIF[i].preg_to_free),
             .data_out(renamed_dst_alias[i]),
-            .full(),    // Not needed because if ROB is writing to it then a preg is in use
+            .full(),   
             .empty(no_free_pregs[i])
         );
 
@@ -87,10 +91,4 @@ always @(posedge clk) begin
         RatIF[i].w_new_alias <= renamed_dst_alias[i];
     end
 end
-
-
-
-
-
-
 endmodule

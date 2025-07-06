@@ -10,25 +10,16 @@ module RAT(
   logic [$clog2(NUM_PREGS)-1:0] register_alias_table [0:(NUM_AREGS-1)]; // actual rat
   
 
-
-  // resets the RAT on flush
-  integer i;
-  always@(posedge clk) begin
-    if(rst) begin
-      for ( i = 0; i < NUM_AREGS; i++) begin
-        register_alias_table[i[$clog2(NUM_AREGS)-1:0]] <= i[$clog2(NUM_PREGS)-1:0];
-      end
-    end
-  end
-  
-
   genvar k;
   generate  
-
     // Writing alias to the rat
-    for(k = 0; k <= RENAME_WIDTH; k++) begin
+    for(k = 0; k < RENAME_WIDTH; k++) begin
       always@(posedge clk) begin
-          if(RenameIF.w_en[k] && !rst) begin 
+        if(rst) begin
+          for ( i = 0; i < NUM_AREGS; i++) begin
+            register_alias_table[i] <= i;
+          end
+        end else if(RenameIF.w_en[k]) begin 
             register_alias_table[RenameIF[k].w_dst_areg] <= RenameIF[k].w_new_alias; 
           end
       end

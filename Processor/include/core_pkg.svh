@@ -138,7 +138,8 @@ typedef struct packed {
 } Ex_uOP;
 
 typedef struct packed {
-    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
+    logic [$clog2(NUM_AREGS)-1:0] dst_areg,
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg,
     //logic [31:0] val, ->Stored with Ready-bit matrix now 
     logic exception,
     logic br_mispred,

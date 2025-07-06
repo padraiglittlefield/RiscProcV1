@@ -7,7 +7,8 @@ module ROB #(
     input rst,
     ExecuteROBIF.ROB ExecuteIF[3],
     DispatchROBIF.ROB DispatchIF[DISP_WIDTH],
-    ROBPhysRegFileIF.ROB ArchRegFile[RETIRE_WIDTH]
+    ROBPhysRegFileIF.ROB ArchRegFile[RETIRE_WIDTH],
+    RenameROBIF.ROB RenameIF[RETIRE_WIDTH]
 
 );
 
@@ -87,6 +88,9 @@ generate
             assign DispatchIF[j].rob_index = wr_ptr + 1;
         end
 
+
+        
+
     end
 endgenerate
 
@@ -120,11 +124,18 @@ always@(posedge clk) begin
 end
 
 
-// Write Results to A-REG
+/*  Retire Instructions
+    - Write Results to A-REG
+    - Free Dest Pregs
+*/
 for(int i = 0; i < RETIRE_WIDTH; i++) begin
-    assign ArchRegFile.rob_valid[i] = fifo_rd_en[i];
-    assign ArchRegFile.rob_dst_val[i] = rob_entry_row[i].val;
-    assign ArchRegFile.rob_dst_index[i] = rob_entry_row[i].dst_reg;
+
+    assign ArchRegFile[i].rob_valid = fifo_rd_en[i];
+    assign ArchRegFile[i].rob_dst_val = rob_entry_row[i].val;
+    assign ArchRegFile[i].rob_dst_index = rob_entry_row[i].dst_reg;
+
+    assign RenameIF[i].preg_to_free = rob_entry_row[i].dst_preg;
+    assign RenameIF[i].free_valid = fifo_rd_en[i];
 end
 
 
