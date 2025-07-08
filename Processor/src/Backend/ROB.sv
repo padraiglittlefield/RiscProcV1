@@ -137,6 +137,4 @@ for(int i = 0; i < RETIRE_WIDTH; i++) begin
     assign RenameIF[i].preg_to_free = rob_entry_row[i].dst_preg;
     assign RenameIF[i].free_valid = fifo_rd_en[i];
 end
-
-
 endmodule
