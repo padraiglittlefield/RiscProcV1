@@ -45,7 +45,7 @@ module RAT(
   endgenerate
 
 
-  //reading from the RATS. TODO allow for multiple reads for rd, src1, and src2
+  //reading from the RATS. allow for multiple reads for rd, src1, and src2
   genvar j;
   generate
       for( j = 1; j <= `RENAME_WIDTH * 3; j++) begin

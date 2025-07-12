@@ -53,10 +53,14 @@ always @(posedge clk) begin
         
         num_reads = '0;
         
+        logic [31:0] retiring_vals [RETIRE_WIDTH-1:0];
+
         for (int i = 0; i < RETIRE_WIDTH; i++) begin
             num_reads += fifo_rd_en[i];
-            rob_entry_row[i].val = fifo_vals[(i + col) & (RETIRE_WIDTH - 1)]; // not so sure about this
+            retiring_vals[i] = fifo_vals[(i + col) & (RETIRE_WIDTH - 1)];
+            assign ArchRegFile[i].rob_dst_val = retiring_vals[i];
         end
+
 
         rd_ptr <= rd_ptr + num_reads;
     end
@@ -101,7 +105,7 @@ always@(posedge clk) begin
     if(rst) begin
         wr_ptr <= '0;
     end else begin
-        wr_ptr <= wr_ptr + (DispatchIF[0].entry_valid + DispatchIF[1].entry_valid); 
+        wr_ptr <= wr_ptr + (DispatchIF[0].entry_valid + DispatchIF[1].entry_valid); // Only works for DISPATCH Width = 2
     end
 end
 

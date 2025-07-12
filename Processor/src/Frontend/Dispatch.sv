@@ -30,6 +30,7 @@ Dispatch is currently bottlenecked by the number of execution pipes, which in tu
 Disp_uOP disp_uop_out [1:0];
 
 logic stall_queue[DISP_WIDTH-1:0];
+logic[RS_IDX_WIDTH-1:0] entry_index [1:0]; // The RS entry that is free 
 /* Dispatch Queue
     - Stores renamed instructions that are waiting to be allocated in the Reservation Stations
 */
@@ -42,7 +43,8 @@ generate
         assign ex_pipe_dst[i] = RenameIF[i].instr_uop.ex_pipe_dst;
         assign stall_queue[i] = stall & collision_stall[i];
 
-        assign disp_en[i] = ~stall_queue & WakeupIF[ex_pipe_dst[i]].entry_free & ~ROBIF[i].rob_full; // only dispatch if there are no stalls and there is a free rs in the target ex_pipe 
+        assign disp_en[i] = ~stall_queue[i] & WakeupIF[ex_pipe_dst[i]].entry_free & ~ROBIF[i].rob_full; // only dispatch if there are no stalls and there is a free rs in the target ex_pipe 
+        assign entry_index[i] = WakeupIF[ex_pipe_dst[i]].entry_index;
 
         FIFO #(
             .DEPTH(DISP_DEPTH/DISP_WIDTH),
@@ -139,7 +141,6 @@ end
 */
 
 genvar j;
-logic[RS_IDX_WIDTH-1:0] entry_index [1:0]; // The RS entry that is free 
 generate
     for (int j = 0; j < DISP_WIDTH; j++) begin
         WakeupIF[ex_pipe_dst[j]].dispatch_valid = disp_en[j];
