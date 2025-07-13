@@ -1,0 +1,63 @@
+[2025-07-13 17:27:16.688218] |==============================================================================|
+[2025-07-13 17:27:16.688374] |=========                      OpenRAM v1.2.47                       =========|
+[2025-07-13 17:27:16.688427] |=========                                                            =========|
+[2025-07-13 17:27:16.688470] |=========               VLSI Design and Automation Lab               =========|
+[2025-07-13 17:27:16.688513] |=========        Computer Science and Engineering Department         =========|
+[2025-07-13 17:27:16.688555] |=========            University of California Santa Cruz             =========|
+[2025-07-13 17:27:16.688633] |=========                                                            =========|
+[2025-07-13 17:27:16.688672] |=========          Usage help: openram-user-group@ucsc.edu           =========|
+[2025-07-13 17:27:16.688700] |=========        Development help: openram-dev-group@ucsc.edu        =========|
+[2025-07-13 17:27:16.688726] |=========                See LICENSE for license info                =========|
+[2025-07-13 17:27:16.688750] |==============================================================================|
+[2025-07-13 17:27:16.688779] ** Start: 07/13/2025 17:27:16
+[2025-07-13 17:27:16.688810] Technology: freepdk45
+[2025-07-13 17:27:16.688850] Total size: 16384 bits
+[2025-07-13 17:27:16.688898] Word size: 128
+Words: 128
+Banks: 1
+[2025-07-13 17:27:16.688942] Write size: 8
+[2025-07-13 17:27:16.688978] RW ports: 0
+R-only ports: 1
+W-only ports: 1
+[2025-07-13 17:27:16.689006] Design supply routing skipped. Supplies will have multiple must-connect pins. (route_supplies=True to enable supply routing).
+[2025-07-13 17:27:16.689032] DRC/LVS/PEX is only run on the top-level design to save run-time (inline_lvsdrc=True to do inline checking).
+[2025-07-13 17:27:16.689057] DRC/LVS/PEX is disabled (check_lvsdrc=True to enable).
+[2025-07-13 17:27:16.689081] Characterization is disabled (using analytical delay models) (analytical_delay=False to simulate).
+[2025-07-13 17:27:16.689105] Only generating nominal corner timing.
+[2025-07-13 17:27:16.689130] Words per row: None
+[2025-07-13 17:27:16.689162] Output files are: 
+[2025-07-13 17:27:16.689190] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.lvs
+[2025-07-13 17:27:16.689214] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.sp
+[2025-07-13 17:27:16.689238] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.v
+[2025-07-13 17:27:16.689261] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.lib
+[2025-07-13 17:27:16.689283] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.py
+[2025-07-13 17:27:16.689306] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.html
+[2025-07-13 17:27:16.689329] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.log
+[2025-07-13 17:27:16.689351] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.lef
+[2025-07-13 17:27:16.689374] /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.gds
+[2025-07-13 17:27:33.369054] ** Submodules: 16.7 seconds
+[2025-07-13 17:27:33.592138] ** Placement: 0.2 seconds
+[2025-07-13 17:29:32.320942] ** Routing: 118.7 seconds
+[2025-07-13 17:29:32.327236] ** Verification: 0.0 seconds
+[2025-07-13 17:29:32.327302] ** SRAM creation: 135.6 seconds
+[2025-07-13 17:29:32.327347] SP: Writing to /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.sp
+[2025-07-13 17:29:32.552611] ** Spice writing: 0.2 seconds
+[2025-07-13 17:29:32.552690] DELAY: Writing stimulus...
+[2025-07-13 17:29:33.288695] ** DELAY: 0.7 seconds
+[2025-07-13 17:29:33.422466] GDS: Writing to /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.gds
+[2025-07-13 17:29:33.823382] ** GDS: 0.4 seconds
+[2025-07-13 17:29:33.823461] LEF: Writing to /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.lef
+[2025-07-13 17:29:33.957154] ** LEF: 0.1 seconds
+[2025-07-13 17:29:33.957193] LVS: Writing to /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.lvs.sp
+[2025-07-13 17:29:34.092369] ** LVS writing: 0.1 seconds
+[2025-07-13 17:29:34.092417] LIB: Characterizing... 
+[2025-07-13 17:29:34.136563] WARNING: file elmore.py: line 45: In analytical mode, all ports have the timing of the first read port.
+
+[2025-07-13 17:29:34.553543] ** Characterization: 0.5 seconds
+[2025-07-13 17:29:34.553749] Config: Writing to /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.py
+[2025-07-13 17:29:34.553787] ** Config: 0.0 seconds
+[2025-07-13 17:29:34.554503] Datasheet: Writing to /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.html
+[2025-07-13 17:29:34.555431] ** Datasheet: 0.0 seconds
+[2025-07-13 17:29:34.555468] Verilog: Writing to /home/padraig/Tools/OpenRAM/macro/sram_0rw1r1w_128_128_freepdk45/sram_0rw1r1w_128_128_freepdk45.v
+[2025-07-13 17:29:34.555615] ** Verilog: 0.0 seconds
+[2025-07-13 17:29:34.557882] ** End: 137.9 seconds
