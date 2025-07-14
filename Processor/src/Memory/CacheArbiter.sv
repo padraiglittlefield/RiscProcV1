@@ -1,4 +1,4 @@
-module CacheArbiter #()(
+  module CacheArbiter #()(
     input logic clk,
     input logic rst,
     input logic stall,
