@@ -4,6 +4,10 @@ module SACacheController #(
 
 );
 
+localparam c = 17;
+localparam b = 7;
+localparam s = $clog2(NUM_WAYS);
+
 genvar i;
 generate
     
