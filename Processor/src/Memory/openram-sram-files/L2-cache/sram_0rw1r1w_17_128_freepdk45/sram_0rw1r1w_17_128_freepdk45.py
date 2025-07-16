@@ -1,4 +1,4 @@
-word_size = 17 # 15 Tag-bits, 1 Dirty, 1 Valid
+word_size = 17
 num_words = 128
 write_size = 17
 

@@ -70,6 +70,8 @@ typedef enum {
 
 
 /* Processor Parameters */
+parameter WORD_SIZE = 32
+
 parameter NUM_FUS       = 4
 parameter RS_ENTRIES    = 8
 parameter NUM_PREGS     = 128

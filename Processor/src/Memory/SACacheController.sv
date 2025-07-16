@@ -18,8 +18,8 @@ generate
         );
 
 
-        sram_0rw1r1w_19_128_freepdk45 tag_store (
-
+        sram_0rw1r1w_17_128_freepdk45 tag_store (
+            
         );
 
     end
