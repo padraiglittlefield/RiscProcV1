@@ -1,4 +1,4 @@
-dfmodule dCacheController #()(
+module dCacheController #()(
     input logic clk,
     input logic rst,
 
@@ -20,7 +20,7 @@ logic [127:0] rdata;
 assign arbiter.rdata = rdata[(WORD_SIZE * (raddr[b-1:0])+1)-1:(WORD_SIZE * raddr[b-1:0])]; // Pull out the block size
 
 // Write Requests from Arbiter
-logic [31:0] wdata;
+logic [127:0] wdata;
 logic  waddr_valid = arbiter.waddr_valid; 
 logic [31:0] waddr = arbiter.waddr;
 logic [15:0] wmask = arbiter.wmask;
@@ -37,32 +37,41 @@ assign repair_resolved = arbiter.repair_resolved;
 // Write Requests to Arbiter on eviction of dirty block
 
 // Registering vals for tag check/stall
-
-logic [31:0] raddr0_reg, raddr1_reg;
-logic raddr0_valid_reg, raddr1_valid_reg;
+logic [127:0] wdata_reg;
+logic [15:0] wmask_reg;
+logic [31:0] raddr_reg, waddr_reg;
+logic raddr_valid_reg, waddr_valid_reg;
 always@(posedge clk) begin
     if (rst) begin
         // reset regs
-        raddr0_reg <= '0; 
-        raddr1_reg <= '0;
-        raddr0_valid_reg <= '0;
-        raddr1_valid_reg <= '0;
+        raddr_reg <= '0; 
+        raddr_valid_reg <= '0;
+
+        waddr_reg <= '0;
+        waddr_valid_reg <= '0;
+        wdata_reg <= '0;
+        wmask_reg <= '0;
+        
 
     end else if (read_miss_repair || write_miss_repair) begin
         // maintain curr val
-        raddr0_reg <= raddr0_reg; 
-        raddr0_valid_reg <= raddr0_valid_reg;
+        raddr_reg <= raddr_reg; 
+        raddr_valid_reg <= raddr_valid_reg;
 
-        raddr1_reg <= raddr1_reg;
-        raddr1_valid_reg <= raddr1_valid_reg;
+        waddr_reg <= waddr_reg;
+        waddr_valid_reg <= waddr_valid_reg;
+        wdata_reg <= wdata_reg;
+        wmask_reg <= wmask_reg;
 
     end else begin
         // update new vals
-        raddr0_reg <= raddr;
-        raddr0_valid_reg <= raddr_valid;
+        raddr_reg <= raddr;
+        raddr_valid_reg <= raddr_valid;
         // shift regs
-        raddr1_reg <= raddr0_reg;
-        raddr1_valid_reg <= raddr0_valid_reg;
+        waddr_reg <= waddr;
+        waddr_valid_reg <= waddr_valid;
+        wdata_reg <= wdata;
+        wmask_reg <= wmask;
     end
 end
 
@@ -101,6 +110,8 @@ always@(posedge clk) begin
     end
 end
 
+logic [127:0] wdata0_reg, wdata1_reg;
+logic [15:0] wmask0_reg, wmask1_reg;
 logic [31:0] waddr0_reg, waddr1_reg;
 logic waddr0_valid_reg, waddr1_valid_reg;
 always@(posedge clk) begin
@@ -108,8 +119,15 @@ always@(posedge clk) begin
         // reset regs
         waddr0_reg <= '0; 
         waddr1_reg <= '0;
+        
         waddr0_valid_reg <= '0;
         waddr1_valid_reg <= '0;
+
+        wdata0_reg <= '0;
+        wdata1_reg <= '0;
+        
+        wmask0_reg <= '0;
+        wmask1_reg <= '0;
 
     end else if (read_miss_repair || write_miss_repair) begin
         // maintain curr val
@@ -119,6 +137,11 @@ always@(posedge clk) begin
         waddr1_reg <= waddr1_reg;
         waddr1_valid_reg <= waddr1_valid_reg;
 
+        wdata0_reg <= wdata0_reg;
+        wdata1_reg <= wdata1_reg;
+        
+        wmask0_reg <= wmask0_reg;
+        wmask1_reg <= wmask1_reg;
     end else begin
         // update new vals
         waddr0_reg <= waddr;
@@ -126,6 +149,12 @@ always@(posedge clk) begin
         // shift regs
         waddr1_reg <= waddr0_reg;
         waddr1_valid_reg <= waddr0_valid_reg;
+
+        wdata0_reg <= wdata;
+        wdata1_reg <= wdata0_reg;
+        
+        wmask0_reg <= wmask;
+        wmask1_reg <= wmask0_reg;
     end
 end
 
@@ -139,7 +168,7 @@ logic block_dirty = wblock_metadata[1];
 logic [(TAG_BITS-1):0] wtag = wblock_metadata[(TAG_BITS + 1 + 1)-1:2];
 
 logic write_enable;
-assign write_enable = waddr1_valid_reg & !write_miss_repair;
+assign write_enable = (waddr1_valid_reg & ~write_miss_repair) | (repair_resolved & );
 
 always@(posedge clk) begin
     if(rst) begin
@@ -172,13 +201,15 @@ end
 
 //TODO: Write are also blocked
 
+
+
 /* Define SRAM modules for Tag and Data Store. Inputs are registered, so 2 cycle read */
 srsram_0rw1r1w_128_256_freepdk45 data_store (
     .clk0(clk), 
     .csb0(~write_enable), // active low chip select
-    .wmask0(),
+    .wmask0(wmask1_reg),
     .addr0(waddr1_reg[(c-s)-1:b]), // Write Port. Delay the data write until we can ensure that the tag is there
-    .din0(wdata),
+    .din0(wdata1_reg),
     .clk1(clk), 
     .csb1(~raddr_valid), // active low chip select
     .addr1(raddr[(c-s)-1:b]), // Read Port
@@ -211,13 +242,11 @@ sram_0rw1r1w_19_256_freepdk45 tag_store1 (
 
 // TODO: 2-Entry Victim Cache (Register Backed) with a flip-flop LRU policy ici
 
-/*TODO: Mini - Store Buffer
-    
-    1. Before writing a value to the cache (from the head of the store buffer) we will need to check if its in the cache (Write Allocate/Writeback Policy).
-        The store buffer will hold that value while we check to see if we need to repair it.
-    
-    2. The store buffer must undergo an associate lookup to check if if a read request has a more recent value. If we miss in cache, but hit in the store buffer, dont repair read miss
+//TODO: Skip write stall when we are repairing a miss
+
+// TODO: Add writeback logic, as well as mechanism for placing in a new block (read old block, overwrite old block)
+
+// TODO: Invalidate SRAM on resets (flip valid bit for each block)
 
 
-*/
 endmodule
