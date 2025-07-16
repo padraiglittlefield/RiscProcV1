@@ -79,5 +79,10 @@ logic [(b)-1:0] offset;
 // Update new entry in the cache
 
 
+// NEW TODOS: (IGNORE ABOCE FOR NOW)
+// TODO: Use the type of write, as well as block offset, to correctly set wmask and put the data in the right word by shifting (take from my sj code)
+// TODO: Connect to Load Queue and Store Buffer
+// TODO: Connect to MMU, L1 i/d-Cache, L2 Cache, and AXI-Master RAM Controller
+// TODO: Determine a form of cache corhence for i/d-L1 Cache as well as how to handle if both try and request a miss repair at the same time 
 
 endmodule

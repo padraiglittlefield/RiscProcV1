@@ -31,7 +31,7 @@ assign wdata = arbiter.wdata;
 logic repair_resolved;
 
 assign arbiter.read_miss_repair = read_miss_repair;
-assign arbiter.missed_addr = raddr1_reg;
+assign arbiter.missed_addr = raddr_reg;
 assign repair_resolved = arbiter.repair_resolved;
 
 // Write Requests to Arbiter on eviction of dirty block
@@ -52,7 +52,6 @@ always@(posedge clk) begin
         wdata_reg <= '0;
         wmask_reg <= '0;
         
-
     end else if (read_miss_repair || write_miss_repair) begin
         // maintain curr val
         raddr_reg <= raddr_reg; 
@@ -88,11 +87,11 @@ always@(posedge clk) begin
     if(rst) begin
         read_miss_repair <= 1'b0;
     end else if(!read_miss_repair) begin
-        if(raddr1_valid_reg) begin
+        if(raddr_valid_reg) begin
             if(!rblock_valid) begin
                 read_miss_repair <= 1'b1; // Block doesn't exist in cache, we must get it
             end else begin
-                if(rtag != raddr1_reg[31:c+1]) begin
+                if(rtag != raddr_reg[31:c+1]) begin
                     read_miss_repair <= 1'b1;
                 end else begin
                     read_miss_repair <= 1'b0;
@@ -110,53 +109,6 @@ always@(posedge clk) begin
     end
 end
 
-logic [127:0] wdata0_reg, wdata1_reg;
-logic [15:0] wmask0_reg, wmask1_reg;
-logic [31:0] waddr0_reg, waddr1_reg;
-logic waddr0_valid_reg, waddr1_valid_reg;
-always@(posedge clk) begin
-    if (rst) begin
-        // reset regs
-        waddr0_reg <= '0; 
-        waddr1_reg <= '0;
-        
-        waddr0_valid_reg <= '0;
-        waddr1_valid_reg <= '0;
-
-        wdata0_reg <= '0;
-        wdata1_reg <= '0;
-        
-        wmask0_reg <= '0;
-        wmask1_reg <= '0;
-
-    end else if (read_miss_repair || write_miss_repair) begin
-        // maintain curr val
-        waddr0_reg <= waddr0_reg; 
-        waddr0_valid_reg <= waddr0_valid_reg;
-
-        waddr1_reg <= waddr1_reg;
-        waddr1_valid_reg <= waddr1_valid_reg;
-
-        wdata0_reg <= wdata0_reg;
-        wdata1_reg <= wdata1_reg;
-        
-        wmask0_reg <= wmask0_reg;
-        wmask1_reg <= wmask1_reg;
-    end else begin
-        // update new vals
-        waddr0_reg <= waddr;
-        waddr0_valid_reg <= waddr_valid;
-        // shift regs
-        waddr1_reg <= waddr0_reg;
-        waddr1_valid_reg <= waddr0_valid_reg;
-
-        wdata0_reg <= wdata;
-        wdata1_reg <= wdata0_reg;
-        
-        wmask0_reg <= wmask;
-        wmask1_reg <= wmask0_reg;
-    end
-end
 
 // Tag Checking
 logic write_miss_repair;
@@ -174,11 +126,11 @@ always@(posedge clk) begin
     if(rst) begin
         write_miss_repair <= 1'b0;
     end else if(!write_miss_repair) begin
-        if(waddr1_reg) begin
+        if(waddr_valid_reg) begin
             if(!wblock_valid) begin
                 write_miss_repair <= 1'b1; // Block doesn't exist in cache, we must get it
             end else begin
-                if(wtag != waddr1_reg[31:c+1]) begin
+                if(wtag != waddr_reg[31:c+1]) begin
                     write_miss_repair <= 1'b1;
                 end else begin
                     write_miss_repair <= 1'b0;
@@ -208,7 +160,7 @@ srsram_0rw1r1w_128_256_freepdk45 data_store (
     .clk0(clk), 
     .csb0(~write_enable), // active low chip select
     .wmask0(wmask1_reg),
-    .addr0(waddr1_reg[(c-s)-1:b]), // Write Port. Delay the data write until we can ensure that the tag is there
+    .addr0(waddr_reg[(c-s)-1:b]), // Write Port. Delay the data write until we can ensure that the tag is there
     .din0(wdata1_reg),
     .clk1(clk), 
     .csb1(~raddr_valid), // active low chip select
