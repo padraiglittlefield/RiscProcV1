@@ -154,14 +154,23 @@ end
 //TODO: Write are also blocked
 
 
+logic [127:0] wdata_i;
+logic [15:0] wmask_i;
+logic [31:0] waddr_i;
+
+// Connect to arbiter for when we need to repair a miss
+assign wdata_i = wdata1_reg;
+assign waddr_i = waddr_reg[(c-s)-1:b];
+assign wmask_i = wmask1_reg;
+
 
 /* Define SRAM modules for Tag and Data Store. Inputs are registered, so 2 cycle read */
 srsram_0rw1r1w_128_256_freepdk45 data_store (
     .clk0(clk), 
     .csb0(~write_enable), // active low chip select
-    .wmask0(wmask1_reg),
-    .addr0(waddr_reg[(c-s)-1:b]), // Write Port. Delay the data write until we can ensure that the tag is there
-    .din0(wdata1_reg),
+    .wmask0(wmask_i),
+    .addr0(waddr_i), // Write Port. Delay the data write until we can ensure that the tag is there
+    .din0(wdata_i),
     .clk1(clk), 
     .csb1(~raddr_valid), // active low chip select
     .addr1(raddr[(c-s)-1:b]), // Read Port
