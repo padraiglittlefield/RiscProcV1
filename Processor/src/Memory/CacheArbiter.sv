@@ -17,7 +17,7 @@
     */
 );
 
-
+// TODO: 2-Entry Victim Cache (Register Backed) with a flip-flop LRU policy ici
 /*  TODO: I really need to abstract the arbiter and then in a seperate file, instantiate an arbiter for L1 (Inst and Data), 
         Victim Cache, and L2. Therefore, the arbiter needs be smaller in scope. Need to figure out how to remedy this
 
@@ -79,10 +79,135 @@ logic [(b)-1:0] offset;
 // Update new entry in the cache
 
 
-// NEW TODOS: (IGNORE ABOCE FOR NOW)
+// NEW TODOS: (IGNORE ABOVE FOR NOW)
 // TODO: Use the type of write, as well as block offset, to correctly set wmask and put the data in the right word by shifting (take from my sj code)
 // TODO: Connect to Load Queue and Store Buffer
 // TODO: Connect to MMU, L1 i/d-Cache, L2 Cache, and AXI-Master RAM Controller
 // TODO: Determine a form of cache corhence for i/d-L1 Cache as well as how to handle if both try and request a miss repair at the same time 
+
+
+typedef enum logic [2:0] {
+    IDLE,
+    READ_ACCESS,
+    WRITE_ACCESS,
+    READ_WRITE_ACCESS,
+    READ_MISS_REPAIR,
+    WRITE_MISS_REPAIR
+} l1_cache_state_t;
+
+typedef enum logic [2:0] {
+    IDLE,
+    READ_ACCESS,
+    WRITE_ACCESS,
+    READ_MISS_REPAIR,
+    WRITE_MISS_REPAIR
+} l2_cache_state_t;
+
+typedef enum logic [2:0] {
+    IDLE,
+    READ_ACCESS,
+    WRITE_ACCESS
+} mem_interface_state_t;
+
+
+l1_cache_state_t next_l1_state;
+l1_cache_state_t curr_l1_state;
+
+l2_cache_state_t next_l2_state;
+l2_cache_state_t curr_l2_state;
+
+// TODO: Make interface to connect to LSU to actually recieve addrs and such
+// TODO: Replace comments within state transition with actual wires from interface connection
+
+
+logic same_address;
+always always_comb begin : State_Transition
+    next_l1_state = curr_l1_state;
+    next_l2_state = curr_l2_state;
+    
+    if() begin // raddr == waddr
+        same_address = 1;
+    end
+
+
+        // TODO: Check for collision with read and write
+    if(curr_l1_state ) begin
+        IDLE: begin
+
+            if () begin // raddr and waddr valid
+                
+                next_l1_state = READ_WRITE_ACCESS;
+
+            end else if() begin //raddr valid but not waddr
+                
+                next_l1_state = READ_ACCESS;
+            
+            end else if() begin // waddr valid but not raddr
+
+                next_l1_state = WRITE_ACCESS;
+
+            end else begin
+
+                next_l1_state = IDLE;
+
+            end
+        end
+    end
+    
+    case(curr_l1_state) 
+        IDLE, READ_ACCESS, WRITE_ACCESS, READ_WRITE_ACCESS: begin
+            
+            if () begin // raddr and waddr valid
+                
+                next_l1_state = READ_WRITE_ACCESS;
+
+            end else if() begin //raddr valid but not waddr
+                
+                next_l1_state = READ_ACCESS;
+            
+            end else if() begin // waddr valid but not raddr
+
+                next_l1_state = WRITE_ACCESS;
+
+            end else begin
+
+                next_l1_state = IDLE;
+
+            end
+        end
+        MISS_REPAIR: begin
+        end
+        default: begin
+        end
+    endcase
+
+
+end
+
+
+
+// typedef enum logic [2:0] { 
+//     IDLE,
+//     L1,
+//     L2,
+//     MEM
+// } arbiter_state_t;
+
+
+// case(curr_l1_state) 
+//     IDLE: begin
+//     end
+//     READ_ACCESS: begin  
+//     end
+//     WRITE_ACCESS: begin
+//     end
+//     READ_WRITE_ACCESS: begin
+//     end
+//     MISS_REPAIR: begin
+//     end
+//     default: begin
+//     end
+// endcase
+
 
 endmodule

@@ -39,7 +39,6 @@ assign repair_resolved = arbiter.repair_resolved; // Indicates that the arbiter 
 // Registering vals for tag check/stall
 logic [127:0] wdata_reg;
 logic [15:0] wmask_reg;
-logic [:0] wblock_metadata_reg;
 logic [31:0] raddr_reg, waddr_reg;
 logic raddr_valid_reg, waddr_valid_reg;
 always@(posedge clk) begin
@@ -84,6 +83,7 @@ end
 logic [15:0] wmask_i;
 logic [31:0] waddr_i;
 logic [127:0] wdata_i;
+logic [(TAG_BITS + 1 + 1)-1:0] wblock_metadata_i;
 
 
 /* Upon recieving the correct block, the arbiter will attempt to write it to the cache by bypassing the 1-cycle store buffer */
@@ -91,6 +91,7 @@ assign wmask_i = ~repair_resolved ? wmask_reg : wmask;
 assign waddr_i = ~repair_resolved ? waddr_reg : waddr;
 assign wdata_i = ~repair_resolved ? wdata_reg : wdata;
 
+assign wblock_metadata_i = ~repair_resolved ? {wblock_metadata[(TAG_BITS + 1 + 1):1], 1'b1} : {waddr[31:TAG_BITS+1],1'b0,1'b1};
 
 /* Define SRAM modules for Tag and Data Store. Inputs are registered, so 2 cycle read */
 srsram_0rw1r1w_128_256_freepdk45 data_store (
@@ -110,18 +111,19 @@ sram_0rw1r1w_19_256_freepdk45 tag_store0 ( // For checking Read Misses
     .clk0(clk), 
     .csb0(~write_enable), // active low chip select
     .addr0(waddr_i), // Write to tags on block replacement
-    .din0(),
+    .din0(wblock_metadata_i),
     .clk1(clk), 
     .csb1(~raddr_valid), // active low chip select
     .addr1(raddr[c:b+1]),
     .dout1(rblock_metadata)
 );
 
+
 sram_0rw1r1w_19_256_freepdk45 tag_store1 ( // For checking Write Misses
-    .clk0(clk), 
-    .csb0(), // active low chip select
-    .addr0(), // Write to tags on block replacement
-    .din0(),
+    .clk0(clk),
+    .csb0(~write_enable), // active low chip select
+    .addr0(waddr_i), // Write to tags on block replacement
+    .din0(wblock_metadata_i),
     .clk1(clk), 
     .csb1(~waddr_valid), // active low chip select
     .addr1(waddr[c:b+1]),
@@ -146,7 +148,7 @@ always@(posedge clk) begin
             if(!rblock_valid) begin
                 read_miss_repair <= 1'b1; // Block doesn't exist in cache, we must get it
             end else begin
-                if(rtag != raddr_reg[31:c+1]) begin
+                if(rtag != raddr_reg[31:TAG_BITS+1]) begin
                     read_miss_repair <= 1'b1;
                 end else begin
                     read_miss_repair <= 1'b0;
@@ -175,7 +177,7 @@ logic block_dirty = wblock_metadata[1];
 logic [(TAG_BITS-1):0] wtag = wblock_metadata[(TAG_BITS + 1 + 1)-1:2];
 
 logic write_enable;
-assign write_enable = (waddr1_valid_reg & ~write_miss_repair) | (repair_resolved); 
+assign write_enable = (waddr_valid_reg & ~write_miss_repair) | (repair_resolved); 
 
 always@(posedge clk) begin
     if(rst) begin
@@ -185,7 +187,7 @@ always@(posedge clk) begin
             if(!wblock_valid) begin
                 write_miss_repair <= 1'b1; // Block doesn't exist in cache, we must get it
             end else begin
-                if(wtag != waddr_reg[31:c+1]) begin
+                if(wtag != waddr_reg[31:TAG_BITS+1]) begin
                     write_miss_repair <= 1'b1;
                 end else begin
                     write_miss_repair <= 1'b0;
@@ -202,12 +204,6 @@ always@(posedge clk) begin
         end
     end
 end
-
-// TODO: 2-Entry Victim Cache (Register Backed) with a flip-flop LRU policy ici
-
-//TODO: Skip write stall when we are repairing a miss
-
-// TODO: Add writeback logic, as well as mechanism for placing in a new block (read old block, overwrite old block)
 
 // TODO: Invalidate SRAM on resets (flip valid bit for each block)
 
