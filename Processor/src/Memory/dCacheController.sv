@@ -25,15 +25,15 @@ logic  waddr_valid = arbiter.waddr_valid;
 logic [31:0] waddr = arbiter.waddr;
 logic [15:0] wmask = arbiter.wmask; // 16-bit Mask to target the Bytes. 4'h0001 targets the first byte of the first word in a block
 
-assign wdata = arbiter.wdata;
+assign wdata = arbiter.wdata; //TODO: Whose responsibility is it to shift over the value to match the mask?
 
 // Repair Requests to Arbiter.
 logic repair_resolved;
 
 assign arbiter.read_miss_repair = read_miss_repair;
+assign arbiter.write_miss_repair = write_miss_repair;
 assign arbiter.missed_addr = raddr_reg;
 assign repair_resolved = arbiter.repair_resolved; // Indicates that the arbiter has supplied the missed block.
-
 // Write Requests to Arbiter on eviction of dirty block
 
 // Registering vals for tag check/stall
@@ -78,6 +78,8 @@ end
 //TODO: Check for collisions with reading and writing data
 
 //TODO: Write are also blocked
+
+//TODO: Add support for rdata_valid
 
 
 logic [15:0] wmask_i;
