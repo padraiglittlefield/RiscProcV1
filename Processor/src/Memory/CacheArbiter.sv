@@ -91,16 +91,20 @@ typedef enum logic [2:0] {
     READ_ACCESS,
     WRITE_ACCESS,
     READ_WRITE_ACCESS,
-    READ_MISS_REPAIR,
-    WRITE_MISS_REPAIR
+    MISS_REPAIR,
 } l1_cache_state_t;
+
+typedef enum logic [1:0] {
+    READ_LOWER,
+    WRITEBACK
+} miss_repair_state_t;
 
 typedef enum logic [2:0] {
     IDLE,
+    DONE,
     READ_ACCESS,
     WRITE_ACCESS,
-    READ_MISS_REPAIR,
-    WRITE_MISS_REPAIR
+    MISS_REPAIR,
 } l2_cache_state_t;
 
 typedef enum logic [2:0] {
@@ -113,6 +117,9 @@ typedef enum logic [2:0] {
 l1_cache_state_t next_l1_state;
 l1_cache_state_t curr_l1_state;
 
+miss_repair_state_t next_l1_repair_state;
+miss_repair_state_t curr_l1_repair_state;
+
 l2_cache_state_t next_l2_state;
 l2_cache_state_t curr_l2_state;
 
@@ -120,63 +127,56 @@ l2_cache_state_t curr_l2_state;
 // TODO: Replace comments within state transition with actual wires from interface connection
 
 
-logic same_address;
-always always_comb begin : State_Transition
+logic l1_same_address;
+always always_comb begin : L1_State_Transition
     next_l1_state = curr_l1_state;
     next_l2_state = curr_l2_state;
     
-    if() begin // raddr == waddr
-        same_address = 1;
+    if(/* raddr == waddr */) begin 
+        l1_same_address = 1'b1;
     end
 
-
-        // TODO: Check for collision with read and write
-    if(curr_l1_state ) begin
-        IDLE: begin
-
-            if () begin // raddr and waddr valid
-                
-                next_l1_state = READ_WRITE_ACCESS;
-
-            end else if() begin //raddr valid but not waddr
-                
-                next_l1_state = READ_ACCESS;
-            
-            end else if() begin // waddr valid but not raddr
-
-                next_l1_state = WRITE_ACCESS;
-
-            end else begin
-
-                next_l1_state = IDLE;
-
-            end
-        end
-    end
-    
     case(curr_l1_state) 
         IDLE, READ_ACCESS, WRITE_ACCESS, READ_WRITE_ACCESS: begin
-            
-            if () begin // raddr and waddr valid
-                
+
+            if(/* read miss or write miss */) begin
+                next_l1_state = READ_MISS_REPAIR; //TODO: Determine if we need both read and write miss repair
+            end else if (/*write miss*/) begin
+                next_l1_state = WRITE_MISS_REPAIR;
+            end if (/*raddr and waddr valid */) begin
                 next_l1_state = READ_WRITE_ACCESS;
-
-            end else if() begin //raddr valid but not waddr
-                
+            end else if(/*raddr valid but not waddr*/) begin
                 next_l1_state = READ_ACCESS;
-            
-            end else if() begin // waddr valid but not raddr
-
+            end else if(/* waddr valid but not raddr */) begin 
                 next_l1_state = WRITE_ACCESS;
-
             end else begin
-
                 next_l1_state = IDLE;
-
             end
         end
         MISS_REPAIR: begin
+            /*  1. Send read request to L2. 
+                2. Upon recieving request: 
+                    a. if miss was caused by invalid block, ignore
+                    b. if miss was caused by tag mismatch, read old block, check for dirty bit, write to L2 if dirty
+                3. Overwrite old block with new one and return
+            */
+            next_l1_repair_state = IDLE;
+            case(curr_l1_repair_state)
+                IDLE: begin
+                    
+                end
+                READ_LOWER: begin
+                
+                end 
+                OVERWRITE_BLOCK: begin
+
+                end
+                WRITEBACK: begin
+
+                end
+            endcase
         end
+           
         default: begin
         end
     endcase
@@ -184,6 +184,7 @@ always always_comb begin : State_Transition
 
 end
 
+//TODO: Copy logic from L1 State to create L2 state. Only difference is that we will write to Memory Interface. (Consider how write through would affect it?)
 
 
 // typedef enum logic [2:0] { 
@@ -207,6 +208,47 @@ end
 //     end
 //     default: begin
 //     end
+// endcase
+
+
+// case(curr_l2_state) 
+//     IDLE: begin
+//         next_l1_state = MISS_REPAIR;
+//         next_l2_state = READ_ACCESS;
+//     end
+//     READ_ACCESS: begin
+//         if(/*Read/Write Miss from L2*/) begin
+//             next_l1_state = MISS_REPAIR;
+//             next_l2_state = MISS_REPAIR;
+//         end else if(/*valid out from L2*/) begin
+//             next_l1_state = MISS_REPAIR;
+//             next_l2_state = RESOLVED;
+//         end else begin // Still waiting for block for L2
+//             next_l1_state = MISS_REPAIR;
+//             next_l2_state = READ_ACCESS;
+//         end
+//     end
+//     RESOLVED: begin
+//         // Read evicted block from L1, prepare to write back to L2
+//         next_l1_state = MISS_REPAIR;
+//         next_l2 = WRITE_ACCESS;
+//     end
+//     WRITE_ACCESS: begin
+//         if(/*Read/Write Miss from L2*/) begin
+//             next_l1_state = MISS_REPAIR;
+//             next_l2_state = MISS_REPAIR;
+//         end else if(/*valid out from L2*/) begin
+//             next_l1_state = MISS_REPAIR;
+//             next_l2_state = RESOLVED;
+//         end else begin // Still waiting for block for L2
+//             next_l1_state = MISS_REPAIR;
+//             next_l2_state = READ_ACCESS;
+//         end
+//     end
+//     MISS_REPAIR: begin
+
+//     end
+
 // endcase
 
 
