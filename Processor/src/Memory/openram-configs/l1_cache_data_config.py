@@ -1,4 +1,4 @@
-word_size = 1024 
+word_size = 256
 num_words = 256
 write_size = 8
 

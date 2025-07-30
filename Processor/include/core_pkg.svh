@@ -1,4 +1,8 @@
 `timescale 1ns / 1ps
+
+`ifndef CORE_PKG_SVH
+`define CORE_PKG_SVH
+
 package CORE_PKG;
 
 /* Example
@@ -156,3 +160,6 @@ typedef enum {
 
 
 endpackage
+
+
+`endif

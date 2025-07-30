@@ -1,6 +1,6 @@
 `ifndef ARB_CTRL_IF
 `define ARB_CTRL_IF
-import CORE_PKG::;
+import CORE_PKG::*;
 interface ArbiterControllerIF;
 
     // Read Requests
@@ -12,8 +12,8 @@ interface ArbiterControllerIF;
     // Write Requests
     logic waddr_valid;
     logic [31:0] waddr;
-    logic [31:0] wdata;
-    logic [15:0] wmask;
+    logic [255:0] wdata;
+    logic [31:0] wmask;
 
     // Miss Repairs 
     logic read_miss_repair;

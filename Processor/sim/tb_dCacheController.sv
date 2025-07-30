@@ -38,6 +38,10 @@ module tb_dCacheController;
         rst=0;
         @(posedge clk);
         read_miss_and_repair();
+        @(posedge clk);
+        init_signals();
+        #50;
+        $finish;
     end
 
 
@@ -57,18 +61,21 @@ module tb_dCacheController;
 
     task read_miss_and_repair();
     begin
-        logic [127:0] repaired_block;
+        logic [255:0] repaired_block;
         rst = 1'b0;
         arbiter_if.raddr_valid = 1'b1;
         arbiter_if.raddr = 32'hAABB_CCDD;
         @(posedge clk);
-        
+        arbiter_if.raddr_valid = 1'b0;
+        @(posedge clk);
+        arbiter_if.raddr_valid = 1'b0;
+
         assert(arbiter_if.read_miss_repair == 1'b1) else begin
-            $error("Controller did not request a miss repair");
+            $error("Controller did not request a miss repair\n");
         end 
         
         assert(arbiter_if.missed_addr == 32'hAABB_CCDD) else begin
-            $error("Controller did not send correct missed address");
+            $error("Controller did not send correct missed address\n");
         end
 
         repaired_block = {
@@ -87,7 +94,6 @@ module tb_dCacheController;
         arbiter_if.waddr = arbiter_if.missed_addr;
         arbiter_if.wmask = '1;
         arbiter_if.repair_resolved = 1'b1;
-
     end
     endtask
 

@@ -27,17 +27,17 @@ build: .stamp.build
 waves: .stamp.waves
 
 .stamp.verilate:
-	verilator --binary --trace --timing --exe --build --sv -Iinclude \
+	verilator --binary --trace --timing --exe --build --sv --assert -Iinclude \
 		include/core_pkg.svh \
 		sim/tb_$(mod).sv $(path)$(mod).sv $(extras) --top-module tb_$(mod)
 	@touch .stamp.verilate
 
-.stamp.build: obj_dir/V$(mod)TB
-	obj_dir/V$(mod)TB
+.stamp.build: obj_dir/Vtb_$(mod)
+	obj_dir/Vtb_$(mod)
 	@touch .stamp.build
 
-.stamp.waves: $(mod)TB.vcd
-	gtkwave $(mod)TB.vcd
+.stamp.waves: tb_$(mod).vcd
+	gtkwave tb_$(mod).vcd
 	@touch .stamp.waves
 
 .PHONY: clean
