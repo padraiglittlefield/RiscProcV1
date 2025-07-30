@@ -21,42 +21,42 @@ typedef enum logic[3:0]
 } MemC_Cmd /* public */;
 
 typedef enum {
-    ADD_I, 
-    SUB_I,     
-    AND_I,    
-    OR_I,      
-    XOR_I,    
-    SLT_I,    
-    SLTU_I,   
-    SRA_I,    
-    SRL_I,    
-    SLL_I,    
-    MUL_I,    
-    ADDI_I,    
-    ANDI_I,   
-    ORI_I,    
-    XORI_I,   
-    SLTI_I,   
-    SLTIU_I,  
-    SRAI_I,   
-    SRLI_I,   
-    SLLI_I,   
-    LUI_I,    
-    AUIPC_I,  
-    LW_I,     
-    SW_I,     
-    JAL_I,    
-    JR_I,     
-    JALR_I,   
-    BEQ_I,    
-    BNE_I,    
-    BLT_I,    
-    BGE_I,    
-    BLTU_I,   
-    BGEU_I,   
-    CSRR_I,   
-    CSRW_I,   
-    CSR_I,    
+    ADD_I,
+    SUB_I,    
+    AND_I,   
+    OR_I,     
+    XOR_I,   
+    SLT_I,   
+    SLTU_I,  
+    SRA_I,   
+    SRL_I,   
+    SLL_I,   
+    MUL_I,   
+    ADDI_I,   
+    ANDI_I,  
+    ORI_I,   
+    XORI_I,  
+    SLTI_I,  
+    SLTIU_I, 
+    SRAI_I,  
+    SRLI_I,  
+    SLLI_I,  
+    LUI_I,   
+    AUIPC_I, 
+    LW_I,    
+    SW_I,    
+    JAL_I,   
+    JR_I,    
+    JALR_I,  
+    BEQ_I,   
+    BNE_I,   
+    BLT_I,   
+    BGE_I,   
+    BLTU_I,  
+    BGEU_I,  
+    CSRR_I,  
+    CSRW_I,  
+    CSR_I,   
     INVALID_I
 } instr_opcode;
 
@@ -70,30 +70,30 @@ typedef enum {
 
 
 /* Processor Parameters */
-parameter WORD_SIZE = 32
+parameter WORD_SIZE = 32;
 
-parameter NUM_FUS       = 4
-parameter RS_ENTRIES    = 8
-parameter NUM_PREGS     = 128
-parameter NUM_AREGS     = 32
-parameter NUM_ROB_ENTS  = 64
-parameter RETIRE_WIDTH  = 4
-parameter DISP_WIDTH    = 2
-parameter DISP_DEPTH    = 64
-parameter RENAME_WIDTH  = 2
+parameter NUM_FUS       = 4;
+parameter RS_ENTRIES    = 8;
+parameter NUM_PREGS     = 128;
+parameter NUM_AREGS     = 32;
+parameter NUM_ROB_ENTS  = 64;
+parameter RETIRE_WIDTH  = 4;
+parameter DISP_WIDTH    = 2;
+parameter DISP_DEPTH    = 64;
+parameter RENAME_WIDTH  = 2;
 
 typedef struct packed {
-    logic [$clog2(NUM_PREGS)-1:0] dst_reg,     //Destination Preg 
-    logic[$clog2(NUM_PREGS)-1:0] src1_reg,
-    logic[$clog2(NUM_PREGS)-1:0] src2_reg,
-    logic [31:0] imm_val,
-    logic instr_valid,
-    ex_pipe ex_pipe_dst,
-    logic [31:0] pc,
-    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
-    logic [8:0] latency,
-    logic src1_dp_en,
-    logic src2_dp_en,
+    logic [$clog2(NUM_PREGS)-1:0] dst_reg;    //Destination Preg 
+    logic[$clog2(NUM_PREGS)-1:0] src1_reg;
+    logic[$clog2(NUM_PREGS)-1:0] src2_reg;
+    logic [31:0] imm_val;
+    logic instr_valid;
+    ex_pipe ex_pipe_dst;
+    logic [31:0] pc;
+    logic [$clog2(NUM_AREGS)-1:0] dst_reg;
+    logic [8:0] latency;
+    logic src1_dp_en;
+    logic src2_dp_en;
 } Decode_uOP;
 
 
@@ -101,51 +101,51 @@ typedef struct packed {
 
 
 typedef struct packed {
-    logic [$clog2(NUM_PREGS)-1:0] dst_preg,     //Destination Preg 
-    logic[$clog2(NUM_PREGS)-1:0] src1_reg,
-    logic[$clog2(NUM_PREGS)-1:0] src2_reg,
-    logic [31:0] imm_val,
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg;    //Destination Preg 
+    logic[$clog2(NUM_PREGS)-1:0] src1_reg;
+    logic[$clog2(NUM_PREGS)-1:0] src2_reg;
+    logic [31:0] imm_val;
     
-    ex_pipe ex_pipe_dst,
-    logic [31:0] pc,
-    logic [$clog2(NUM_AREGS)-1:0] dst_reg,
-    logic [8:0] latency,
-    logic src1_dp_en,
-    logic src2_dp_en,
+    ex_pipe ex_pipe_dst;
+    logic [31:0] pc;
+    logic [$clog2(NUM_AREGS)-1:0] dst_reg;
+    logic [8:0] latency;
+    logic src1_dp_en;
+    logic src2_dp_en;
 
 
 } Disp_uOP;
 
 typedef struct packed {
-    logic[$clog2(NUM_PREGS)-1:0] src1_reg,
-    logic[$clog2(NUM_PREGS)-1:0] src2_reg,
+    logic[$clog2(NUM_PREGS)-1:0] src1_reg;
+    logic[$clog2(NUM_PREGS)-1:0] src2_reg;
     logic [31:0] imm_val;
 
 } Sel_uOP;
 
 typedef struct packed {
-    logic [$clog2(NUM_PREGS)-1:0] dst_preg,     //Destination Preg
-    logic [31:0] src1_val,                      // Value of src1 supplied from RegRead
-    logic [31:0] src2_val,                      // Value of src2 supplied from RegRead
-    logic [31:0] ex_out,                        // Result of exec, be it alu,mul,branch,etc
-    logic br_taken,                             // Was the branch taken?
-    //logic br_mispred,                         // Was the branch pred correct?
-    instr_opcode opcode,                        // Instr opcode
-    logic is_branch,                            // Is this a branch instr
-    logic alu_en,                               // ALU instr?
-    logic mul_en,                               // Mul instr?
-    logic agu_en,                               // MMU instr?
-    logic [$clog2(NUM_ROB_ENTS)-1:0] rob_index, // Index in ROB for State Update
-    logic [$clog2(RS_ENTRIES)-1:0] rs_entry_index
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg;    //Destination Preg
+    logic [31:0] src1_val;                     //; Value of src1 supplied from RegRead
+    logic [31:0] src2_val;                     //; Value of src2 supplied from RegRead
+    logic [31:0] ex_out;                       //; Result of exec;be it alu,mul,branch,etc
+    logic br_taken;                            //; Was the branch taken;?
+    //logic br_mispred;;                        // Was the branch pred correct?
+    instr_opcode opcode;                       // Instr opcode
+    logic is_branch;                           //; Is this a branch instr
+    logic alu_en;                              //; ALU instr?
+    logic mul_en;                              //; Mul instr?
+    logic agu_en;                              //; MMU instr?
+    logic [$clog2(NUM_ROB_ENTS)-1:0] rob_index; // Index in ROB for State Update
+    logic [$clog2(RS_ENTRIES)-1:0] rs_entry_index;
 } Ex_uOP;
 
 typedef struct packed {
-    logic [$clog2(NUM_AREGS)-1:0] dst_areg,
-    logic [$clog2(NUM_PREGS)-1:0] dst_preg,
-    //logic [31:0] val, ->Stored with Ready-bit matrix now 
-    logic exception,
-    logic br_mispred,
-    logic [31:0] pc
+    logic [$clog2(NUM_AREGS)-1:0] dst_areg;
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg;
+    //logic [31:0] val; ->Stored with Ready-bit matrix now 
+    logic exception;
+    logic br_mispred;
+    logic [31:0] pc;
 } ROB_Entry;
 
 

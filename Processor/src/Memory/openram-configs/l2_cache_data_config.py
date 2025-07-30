@@ -1,4 +1,4 @@
-word_size = 128
+word_size = 1024 #128 bits* 8 bits/byte
 num_words = 128
 write_size = 8
 

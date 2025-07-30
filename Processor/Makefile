@@ -1,34 +1,35 @@
-mod = idu
+mod ?= idu
+path ?= src/
+extras ?=
+
 .DEFAULT_GOAL := test
 
-.PHONY:test
+.PHONY: test
 test:
-	rm -rf .stamp.*;
-	rm -rf ./obj_dir
-	make verilate mod=$(target) extras="$(extras)"
-	make build mod=$(target)
+	rm -rf .stamp.* ./obj_dir
+	make verilate mod=$(mod) path=$(path) extras="$(extras)"
+	make build mod=$(mod) path=$(path)
 
-.PHONY:make_view
+.PHONY: make_view
 make_view:
-	rm -rf .stamp.*;
-	rm -rf ./obj_dir
-	make verilate mod=$(target) extras="$(extras)"
-	make build mod=$(target)
-	make waves mod=$(target)
+	rm -rf .stamp.* ./obj_dir
+	make verilate mod=$(mod) path=$(path) extras="$(extras)"
+	make build mod=$(mod) path=$(path)
+	make waves mod=$(mod) path=$(path)
 
-.PHONY:verilate
+.PHONY: verilate
 verilate: .stamp.verilate
 
-.PHONY:build
+.PHONY: build
 build: .stamp.build
 
-.PHONY:waves 
+.PHONY: waves
 waves: .stamp.waves
 
 .stamp.verilate:
 	verilator --binary --trace --timing --exe --build --sv -Iinclude \
-	include/core_pkg.svh \
-	sim/$(mod)TB.sv src/Backend/Scheduler/$(mod).sv $(extras) --top-module $(mod)TB
+		include/core_pkg.svh \
+		sim/tb_$(mod).sv $(path)$(mod).sv $(extras) --top-module tb_$(mod)
 	@touch .stamp.verilate
 
 .stamp.build: obj_dir/V$(mod)TB
@@ -41,7 +42,4 @@ waves: .stamp.waves
 
 .PHONY: clean
 clean:
-	rm -rf .stamp.*;
-	rm -rf ./obj_dir
-	rm -rf *.vcd
-	rm -rf test_results.log
+	rm -rf .stamp.* ./obj_dir *.vcd test_results.log
