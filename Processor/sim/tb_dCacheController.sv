@@ -66,11 +66,13 @@ module tb_dCacheController;
         arbiter_if.raddr_valid = 1'b1;
         arbiter_if.raddr = 32'hAABB_CCDD;
         @(posedge clk);
-        arbiter_if.raddr_valid = 1'b0;
+        arbiter_if.raddr_valid = '0;
+        arbiter_if.raddr = '0;
+        arbiter_if.rdata_valid = '0;
         @(posedge clk);
         arbiter_if.raddr_valid = 1'b0;
 
-        assert(arbiter_if.read_miss_repair == 1'b1) else begin
+        assert(arbiter_if.read_repair_request == 1'b1) else begin
             $error("Controller did not request a miss repair\n");
         end 
         

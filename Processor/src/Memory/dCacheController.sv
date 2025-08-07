@@ -14,6 +14,8 @@ module dCacheController #()(
     ArbiterControllerIF.Controller arbiter
 );
 
+
+
 localparam c = 15;
 localparam b = 7;
 localparam s = 0;
@@ -42,32 +44,41 @@ assign wdata = arbiter.wdata; //TODO: Whose responsibility is it to shift over t
 // Repair Requests to Arbiter.
 logic repair_resolved;
 
-assign arbiter.read_miss_repair = read_miss_repair;
+assign arbiter.read_repair_request = read_repair_request;
 assign arbiter.write_miss_repair = write_miss_repair;
-assign arbiter.missed_addr = raddr_reg;
+assign arbiter.missed_addr = raddr_reg1;
 assign repair_resolved = arbiter.repair_resolved; // Indicates that the arbiter has supplied the missed block.
 // Write Requests to Arbiter on eviction of dirty block
 
 // Registering vals for tag check/stall
 logic [255:0] wdata_reg;
 logic [31:0] wmask_reg;
-logic [31:0] raddr_reg, waddr_reg;
-logic raddr_valid_reg, waddr_valid_reg;
+logic [31:0] waddr_reg;
+logic waddr_valid_reg;
+
+logic [31:0] raddr_reg0, raddr_reg1;
+logic raddr_valid_reg0, raddr_valid_reg1;
 always@(posedge clk) begin
     if (rst) begin
         // reset regs
-        raddr_reg <= '0; 
-        raddr_valid_reg <= '0;
+        raddr_reg0 <= '0; 
+        raddr_valid_reg0 <= '0;
+        raddr_reg1 <= '0; 
+        raddr_valid_reg1 <= '0;
+
 
         waddr_reg <= '0;
         waddr_valid_reg <= '0;
         wdata_reg <= '0;
         wmask_reg <= '0;
         
-    end else if (read_miss_repair || write_miss_repair) begin
+    end else if (repairing) begin
         // maintain curr val
-        raddr_reg <= raddr_reg; 
-        raddr_valid_reg <= raddr_valid_reg;
+        raddr_reg0 <= raddr_reg0; 
+        raddr_valid_reg0 <= raddr_valid_reg0;
+
+        raddr_reg1 <= raddr_reg1; 
+        raddr_valid_reg1 <= raddr_valid_reg1;
 
         waddr_reg <= waddr_reg;
         waddr_valid_reg <= waddr_valid_reg;
@@ -76,8 +87,12 @@ always@(posedge clk) begin
 
     end else begin
         // update new vals
-        raddr_reg <= raddr;
-        raddr_valid_reg <= raddr_valid;
+        raddr_reg0 <= raddr; 
+        raddr_valid_reg0 <= raddr_valid;
+
+        raddr_reg1 <= raddr_reg0; 
+        raddr_valid_reg1 <= raddr_valid_reg0;
+
         // shift regs
         waddr_reg <= waddr;
         waddr_valid_reg <= waddr_valid;
@@ -115,8 +130,8 @@ sram_0rw1r1w_256_256_freepdk45 data_store (
     .addr0(waddr_i[(c-s)-1:b]), // Write Port. Delay the data write until we can ensure that the tag is there
     .din0(wdata_i),
     .clk1(clk), 
-    .csb1(~raddr_valid), // active low chip select
-    .addr1(raddr[(c-s)-1:b]), // Read Port
+    .csb1(~raddr_valid_reg0), // active low chip select
+    .addr1(raddr_reg0[(c-s)-1:b]), // Read Port
     .dout1(rdata_block)
 );
 
@@ -127,8 +142,8 @@ sram_0rw1r1w_19_256_freepdk45 tag_store0 ( // For checking Read Misses
     .addr0(waddr_i[(c-s)-1:b]), // Write to tags on block replacement
     .din0(wblock_metadata_i),
     .clk1(clk), 
-    .csb1(~raddr_valid), // active low chip select
-    .addr1(raddr[c:b+1]),
+    .csb1(~raddr_valid_reg0), // active low chip select
+    .addr1(raddr_reg0[c:b+1]),
     .dout1(rblock_metadata)
 );
 
@@ -145,8 +160,25 @@ sram_0rw1r1w_19_256_freepdk45 tag_store1 ( // For checking Write Misses
 );
 
 
+
+// Controlling the repairing mode
+logic repairing;
+always@(posedge clk) begin
+    if(rst) begin
+        repairing <= 1'b0;
+    end else begin
+        if(read_repair_request || write_miss_repair) begin
+            repairing <= 1'b1;
+        end else if(repair_resolved) begin
+            repairing <= 1'b0;
+        end else begin 
+            repairing <= repairing;
+        end
+    end
+end
+
 // Tag Checking
-logic read_miss_repair;
+logic read_repair_request;
 logic [(TAG_BITS + 1 + 1)-1:0] rblock_metadata; // Tag Bits + Dirty + Valid 
 
 // Deconstruct metadata
@@ -154,29 +186,23 @@ logic rblock_valid = rblock_metadata[0];
 logic rblock_dirty = rblock_metadata[1];
 logic [(TAG_BITS-1):0] rtag = rblock_metadata[(TAG_BITS + 1 + 1)-1:2];
 
-always@(posedge clk) begin
-    if(rst) begin
-        read_miss_repair <= 1'b0;
-    end else if(!read_miss_repair) begin
-        if(raddr_valid_reg) begin
+always_comb begin
+    if(!repairing) begin
+        if(raddr_valid_reg1) begin
             if(!rblock_valid) begin
-                read_miss_repair <= 1'b1; // Block doesn't exist in cache, we must get it
+                read_repair_request = 1'b1; // Block doesn't exist in cache, we must get it
             end else begin
-                if(rtag != raddr_reg[31:(c-s)]) begin
-                    read_miss_repair <= 1'b1;
+                if(rtag != raddr_reg1[31:(c-s)]) begin
+                    read_repair_request = 1'b1;
                 end else begin
-                    read_miss_repair <= 1'b0;
+                    read_repair_request = 1'b0;
                 end
             end
         end else begin
-            read_miss_repair <= 1'b0;
+            read_repair_request = 1'b0;
         end
     end else begin
-        if(repair_resolved) begin
-            read_miss_repair <=  1'b0;
-        end else begin
-            read_miss_repair <=  1'b1;            
-        end
+        read_repair_request = 1'b0;
     end
 end
 
@@ -193,29 +219,23 @@ logic [(TAG_BITS-1):0] wtag = wblock_metadata[(TAG_BITS + DIRTY + VALID)-1:2];
 logic write_enable;
 assign write_enable = (waddr_valid_reg & ~write_miss_repair) | (repair_resolved); 
 
-always@(posedge clk) begin
-    if(rst) begin
-        write_miss_repair <= 1'b0;
-    end else if(!write_miss_repair) begin
+always_comb begin
+    if(!repairing) begin
         if(waddr_valid_reg) begin
             if(!wblock_valid) begin
-                write_miss_repair <= 1'b1; // Block doesn't exist in cache, we must get it
+                write_miss_repair = 1'b1; // Block doesn't exist in cache, we must get it
             end else begin
                 if(wtag != waddr_reg[31:(c-s)]) begin
-                    write_miss_repair <= 1'b1;
+                    write_miss_repair = 1'b1;
                 end else begin
-                    write_miss_repair <= 1'b0;
+                    write_miss_repair = 1'b0;
                 end
             end
         end else begin
-            write_miss_repair <= 1'b0;
+            write_miss_repair = 1'b0;
         end
     end else begin
-        if(repair_resolved) begin
-            write_miss_repair <=  1'b0;
-        end else begin
-            write_miss_repair <=  1'b1;            
-        end
+        write_miss_repair = 1'b0;
     end
 end
 

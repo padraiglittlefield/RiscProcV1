@@ -34,21 +34,16 @@ void Vtb_dCacheController___024root__trace_chg_0_sub_0(Vtb_dCacheController___02
         bufp->chgIData(oldp+12,(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr),32);
         bufp->chgIData(oldp+13,(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wmask),32);
         bufp->chgBit(oldp+14,(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved));
-        bufp->chgBit(oldp+15,((1U & (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid)))));
-        bufp->chgCData(oldp+16,((0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
-                                          >> 7U))),8);
-        bufp->chgCData(oldp+17,((0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
+        bufp->chgBit(oldp+15,((1U & (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr_valid)))));
+        bufp->chgCData(oldp+16,((0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr 
                                           >> 8U))),8);
-        bufp->chgBit(oldp+18,((1U & (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr_valid)))));
-        bufp->chgCData(oldp+19,((0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr 
-                                          >> 8U))),8);
-        bufp->chgWData(oldp+20,(vlSelf->tb_dCacheController__DOT__read_miss_and_repair__Vstatic__unnamedblk1__DOT__repaired_block),256);
-        bufp->chgBit(oldp+28,(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.rdata_valid));
+        bufp->chgWData(oldp+17,(vlSelf->tb_dCacheController__DOT__read_miss_and_repair__Vstatic__unnamedblk1__DOT__repaired_block),256);
+        bufp->chgBit(oldp+25,(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.rdata_valid));
     }
     if (VL_UNLIKELY(((vlSelf->__Vm_traceActivity[1U] 
                       | vlSelf->__Vm_traceActivity[2U]) 
                      | vlSelf->__Vm_traceActivity[4U]))) {
-        bufp->chgIData(oldp+29,(((IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved)
+        bufp->chgIData(oldp+26,(((IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved)
                                   ? vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wmask
                                   : vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wmask_reg)),32);
         if (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved) {
@@ -70,61 +65,76 @@ void Vtb_dCacheController___024root__trace_chg_0_sub_0(Vtb_dCacheController___02
             __Vtemp_1[6U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[6U];
             __Vtemp_1[7U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[7U];
         }
-        bufp->chgWData(oldp+30,(__Vtemp_1),256);
+        bufp->chgWData(oldp+27,(__Vtemp_1),256);
     }
     if (VL_UNLIKELY(((vlSelf->__Vm_traceActivity[1U] 
                       | vlSelf->__Vm_traceActivity[3U]) 
                      | vlSelf->__Vm_traceActivity[5U]))) {
-        bufp->chgWData(oldp+38,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rdata_block),256);
+        bufp->chgWData(oldp+35,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rdata_block),256);
     }
     if (VL_UNLIKELY(vlSelf->__Vm_traceActivity[4U])) {
-        bufp->chgWData(oldp+46,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg),256);
-        bufp->chgIData(oldp+54,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wmask_reg),32);
-        bufp->chgIData(oldp+55,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg),32);
-        bufp->chgIData(oldp+56,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg),32);
-        bufp->chgBit(oldp+57,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg));
-        bufp->chgBit(oldp+58,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg));
-        bufp->chgBit(oldp+59,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair));
-        bufp->chgBit(oldp+60,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair));
+        bufp->chgWData(oldp+43,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg),256);
+        bufp->chgIData(oldp+51,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wmask_reg),32);
+        bufp->chgIData(oldp+52,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg),32);
+        bufp->chgBit(oldp+53,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg));
+        bufp->chgIData(oldp+54,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0),32);
+        bufp->chgIData(oldp+55,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1),32);
+        bufp->chgBit(oldp+56,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0));
+        bufp->chgBit(oldp+57,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1));
+        bufp->chgBit(oldp+58,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing));
+        bufp->chgBit(oldp+59,((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0)))));
+        bufp->chgCData(oldp+60,((0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
+                                          >> 7U))),8);
         bufp->chgBit(oldp+61,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__csb0_reg));
         bufp->chgIData(oldp+62,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__wmask0_reg),32);
         bufp->chgCData(oldp+63,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__addr0_reg),8);
         bufp->chgWData(oldp+64,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__din0_reg),256);
-        bufp->chgBit(oldp+72,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__csb0_reg));
-        bufp->chgCData(oldp+73,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__addr0_reg),8);
-        bufp->chgIData(oldp+74,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__din0_reg),19);
-        bufp->chgBit(oldp+75,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__csb0_reg));
-        bufp->chgCData(oldp+76,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__addr0_reg),8);
-        bufp->chgIData(oldp+77,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__din0_reg),19);
+        bufp->chgCData(oldp+72,((0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
+                                          >> 8U))),8);
+        bufp->chgBit(oldp+73,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__csb0_reg));
+        bufp->chgCData(oldp+74,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__addr0_reg),8);
+        bufp->chgIData(oldp+75,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__din0_reg),19);
+        bufp->chgBit(oldp+76,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__csb0_reg));
+        bufp->chgCData(oldp+77,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__addr0_reg),8);
+        bufp->chgIData(oldp+78,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__din0_reg),19);
     }
-    bufp->chgBit(oldp+78,(vlSelf->tb_dCacheController__DOT__clk));
-    bufp->chgIData(oldp+79,(vlSelf->tb_dCacheController__DOT__cycle_count),32);
-    bufp->chgIData(oldp+80,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i),32);
-    bufp->chgIData(oldp+81,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata_i),19);
-    bufp->chgIData(oldp+82,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata),19);
-    bufp->chgBit(oldp+83,((1U & vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata)));
-    bufp->chgBit(oldp+84,((1U & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
+    bufp->chgBit(oldp+79,(vlSelf->tb_dCacheController__DOT__clk));
+    bufp->chgIData(oldp+80,(vlSelf->tb_dCacheController__DOT__cycle_count),32);
+    bufp->chgIData(oldp+81,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i),32);
+    bufp->chgIData(oldp+82,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata_i),19);
+    bufp->chgBit(oldp+83,(((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing))) 
+                           && ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1) 
+                               && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata)) 
+                                   || ((0x1ffffU & 
+                                        (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
+                                         >> 2U)) != 
+                                       (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+                                        >> 0xfU)))))));
+    bufp->chgIData(oldp+84,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata),19);
+    bufp->chgBit(oldp+85,((1U & vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata)));
+    bufp->chgBit(oldp+86,((1U & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
                                  >> 1U))));
-    bufp->chgIData(oldp+85,((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
+    bufp->chgIData(oldp+87,((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
                                          >> 2U))),17);
-    bufp->chgIData(oldp+86,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata),19);
-    bufp->chgBit(oldp+87,((1U & vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata)));
-    bufp->chgBit(oldp+88,((1U & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata 
+    bufp->chgBit(oldp+88,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair));
+    bufp->chgIData(oldp+89,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata),19);
+    bufp->chgBit(oldp+90,((1U & vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata)));
+    bufp->chgBit(oldp+91,((1U & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata 
                                  >> 1U))));
-    bufp->chgIData(oldp+89,((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata 
+    bufp->chgIData(oldp+92,((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata 
                                          >> 2U))),17);
-    bufp->chgBit(oldp+90,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable));
-    bufp->chgBit(oldp+91,((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable)))));
-    bufp->chgCData(oldp+92,((0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i 
+    bufp->chgBit(oldp+93,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable));
+    bufp->chgBit(oldp+94,((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable)))));
+    bufp->chgCData(oldp+95,((0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i 
                                       >> 7U))),8);
-    bufp->chgBit(oldp+93,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__csb1_reg));
-    bufp->chgCData(oldp+94,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__addr1_reg),8);
-    bufp->chgIData(oldp+95,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__MEM_WRITE0__DOT__unnamedblk1__DOT__i),32);
-    bufp->chgBit(oldp+96,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__csb1_reg));
-    bufp->chgCData(oldp+97,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__addr1_reg),8);
-    bufp->chgBit(oldp+98,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__csb1_reg));
-    bufp->chgCData(oldp+99,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__addr1_reg),8);
-    bufp->chgIData(oldp+100,((((0U == (0x1fU & VL_SHIFTL_III(8,32,32, 
+    bufp->chgBit(oldp+96,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__csb1_reg));
+    bufp->chgCData(oldp+97,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__addr1_reg),8);
+    bufp->chgIData(oldp+98,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__MEM_WRITE0__DOT__unnamedblk1__DOT__i),32);
+    bufp->chgBit(oldp+99,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__csb1_reg));
+    bufp->chgCData(oldp+100,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__addr1_reg),8);
+    bufp->chgBit(oldp+101,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__csb1_reg));
+    bufp->chgCData(oldp+102,(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store1__DOT__addr1_reg),8);
+    bufp->chgIData(oldp+103,((((0U == (0x1fU & VL_SHIFTL_III(8,32,32, 
                                                              (0x1fU 
                                                               & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
                                                                  >> 2U)), 5U)))

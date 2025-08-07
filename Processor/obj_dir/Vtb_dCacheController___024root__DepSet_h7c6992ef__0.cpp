@@ -71,30 +71,39 @@ VL_INLINE_OPT VlCoroutine Vtb_dCacheController___024root___eval_initial__TOP__Vt
                                                        68);
     vlSelf->__Vm_traceActivity[2U] = 1U;
     vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid = 0U;
+    vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr = 0U;
+    vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.rdata_valid = 0U;
     co_await vlSelf->__VtrigSched_h637d5c3a__0.trigger(0U, 
                                                        nullptr, 
                                                        "@(posedge tb_dCacheController.clk)", 
                                                        "sim/tb_dCacheController.sv", 
-                                                       70);
+                                                       72);
     vlSelf->__Vm_traceActivity[2U] = 1U;
     vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid = 0U;
     if (vlSymsp->_vm_contextp__->assertOn()) {
-        if (VL_LIKELY((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair))))) {
+        if (VL_LIKELY((1U & (~ ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing))) 
+                                && ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1) 
+                                    && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata)) 
+                                        || ((0x1ffffU 
+                                             & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
+                                                >> 2U)) 
+                                            != (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+                                                >> 0xfU))))))))) {
             if (VL_UNLIKELY(vlSymsp->_vm_contextp__->assertOn())) {
-                VL_WRITEF("[%0t] %%Error: tb_dCacheController.sv:74: Assertion failed in %Ntb_dCacheController.read_miss_and_repair.unnamedblk1: Controller did not request a miss repair\n\n",
+                VL_WRITEF("[%0t] %%Error: tb_dCacheController.sv:76: Assertion failed in %Ntb_dCacheController.read_miss_and_repair.unnamedblk1: Controller did not request a miss repair\n\n",
                           64,VL_TIME_UNITED_Q(1000),
                           -9,vlSymsp->name());
-                VL_STOP_MT("sim/tb_dCacheController.sv", 74, "");
+                VL_STOP_MT("sim/tb_dCacheController.sv", 76, "");
             }
         }
     }
     if (vlSymsp->_vm_contextp__->assertOn()) {
-        if (VL_LIKELY((0xaabbccddU != vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg))) {
+        if (VL_LIKELY((0xaabbccddU != vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1))) {
             if (VL_UNLIKELY(vlSymsp->_vm_contextp__->assertOn())) {
-                VL_WRITEF("[%0t] %%Error: tb_dCacheController.sv:78: Assertion failed in %Ntb_dCacheController.read_miss_and_repair.unnamedblk1: Controller did not send correct missed address\n\n",
+                VL_WRITEF("[%0t] %%Error: tb_dCacheController.sv:80: Assertion failed in %Ntb_dCacheController.read_miss_and_repair.unnamedblk1: Controller did not send correct missed address\n\n",
                           64,VL_TIME_UNITED_Q(1000),
                           -9,vlSymsp->name());
-                VL_STOP_MT("sim/tb_dCacheController.sv", 78, "");
+                VL_STOP_MT("sim/tb_dCacheController.sv", 80, "");
             }
         }
     }
@@ -132,7 +141,7 @@ VL_INLINE_OPT VlCoroutine Vtb_dCacheController___024root___eval_initial__TOP__Vt
         = vlSelf->tb_dCacheController__DOT__read_miss_and_repair__Vstatic__unnamedblk1__DOT__repaired_block[7U];
     vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr_valid = 1U;
     vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr 
-        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg;
+        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1;
     vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wmask = 0xffffffffU;
     vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved = 1U;
     co_await vlSelf->__VtrigSched_h637d5c3a__0.trigger(0U, 
@@ -229,21 +238,21 @@ VL_INLINE_OPT VlCoroutine Vtb_dCacheController___024root___eval_initial__TOP__Vt
                                                            "include/../src/Memory/openram-sram-files/L1-cache/sram_0rw1r1w_19_256_freepdk45.v", 
                                                            58);
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__csb1_reg 
-            = (1U & (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid)));
+            = (1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0)));
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__addr1_reg 
-            = (0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
+            = (0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
                         >> 8U));
         if (VL_UNLIKELY((((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable) 
-                          & (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid)) 
+                          & (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0)) 
                          & ((0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i 
                                       >> 7U)) == (0xffU 
-                                                  & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
+                                                  & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
                                                      >> 8U)))))) {
             VL_WRITEF("%20# WARNING: Writing and reading addr0=%b and addr1=%b simultaneously!\n",
                       64,VL_TIME_UNITED_Q(1000),8,(0xffU 
                                                    & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i 
                                                       >> 7U)),
-                      8,(0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
+                      8,(0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
                                   >> 8U)));
         }
         co_await vlSelf->__VdlySched.delay(0x3e8ULL, 
@@ -274,21 +283,21 @@ VL_INLINE_OPT VlCoroutine Vtb_dCacheController___024root___eval_initial__TOP__Vt
                                                            59);
         vlSelf->__Vm_traceActivity[3U] = 1U;
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__csb1_reg 
-            = (1U & (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid)));
+            = (1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0)));
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__addr1_reg 
-            = (0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
+            = (0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
                         >> 7U));
         if (VL_UNLIKELY((((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable) 
-                          & (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid)) 
+                          & (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0)) 
                          & ((0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i 
                                       >> 7U)) == (0xffU 
-                                                  & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
+                                                  & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
                                                      >> 7U)))))) {
             VL_WRITEF("%20# WARNING: Writing and reading addr0=%b and addr1=%b simultaneously!\n",
                       64,VL_TIME_UNITED_Q(1000),8,(0xffU 
                                                    & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_i 
                                                       >> 7U)),
-                      8,(0xffU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr 
+                      8,(0xffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
                                   >> 7U)));
         }
         co_await vlSelf->__VdlySched.delay(0x3e8ULL, 
@@ -366,6 +375,20 @@ VL_INLINE_OPT void Vtb_dCacheController___024root___act_comb__TOP__0(Vtb_dCacheC
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata_i 
             = (1U | (0x7fffeU & vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata));
     }
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_repair_request 
+        = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing))) 
+           && ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1) 
+               && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata)) 
+                   || ((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
+                                    >> 2U)) != (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+                                                >> 0xfU)))));
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair 
+        = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing))) 
+           && ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg) 
+               && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata)) 
+                   || ((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata 
+                                    >> 2U)) != (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
+                                                >> 0xfU)))));
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable 
         = (((~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair)) 
             & (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg)) 
@@ -377,20 +400,24 @@ VL_INLINE_OPT void Vtb_dCacheController___024root___nba_sequent__TOP__0(Vtb_dCac
     Vtb_dCacheController__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtb_dCacheController___024root___nba_sequent__TOP__0\n"); );
     // Init
-    IData/*31:0*/ __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_reg;
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_reg = 0;
-    CData/*0:0*/ __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg;
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg = 0;
-    CData/*0:0*/ __Vdly__tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair;
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair = 0;
-    VlWide<8>/*255:0*/ __Vtemp_4;
+    IData/*31:0*/ __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 = 0;
+    IData/*31:0*/ __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 = 0;
+    CData/*0:0*/ __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0 = 0;
+    CData/*0:0*/ __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1 = 0;
+    VlWide<8>/*255:0*/ __Vtemp_2;
     // Body
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair 
-        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair;
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg 
-        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg;
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
-        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0 
+        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
+        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1 
+        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1;
+    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+        = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1;
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__csb0_reg 
         = (1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable)));
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__tag_store0__DOT__addr0_reg 
@@ -468,105 +495,100 @@ VL_INLINE_OPT void Vtb_dCacheController___024root___nba_sequent__TOP__0(Vtb_dCac
                   256,vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__din0_reg.data(),
                   32,vlSelf->tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__wmask0_reg);
     }
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair 
-        = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__rst))) 
-           && (1U & ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair)
-                      ? (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved))
-                      : ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg) 
-                         && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata)) 
-                             || ((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
-                                              >> 2U)) 
-                                 != (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg 
-                                     >> 0xfU)))))));
-    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg 
-        = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__rst))) 
-           && (((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair) 
-                | (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair))
-                ? (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg)
-                : (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid)));
     if (vlSelf->tb_dCacheController__DOT__rst) {
-        vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg = 0U;
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wmask_reg = 0U;
-        __Vtemp_4[1U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[1U];
-        __Vtemp_4[2U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[2U];
-        __Vtemp_4[3U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[3U];
-        __Vtemp_4[4U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[4U];
-        __Vtemp_4[5U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[5U];
-        __Vtemp_4[6U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[6U];
-        __Vtemp_4[7U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[7U];
+        __Vtemp_2[1U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[1U];
+        __Vtemp_2[2U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[2U];
+        __Vtemp_2[3U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[3U];
+        __Vtemp_2[4U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[4U];
+        __Vtemp_2[5U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[5U];
+        __Vtemp_2[6U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[6U];
+        __Vtemp_2[7U] = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[7U];
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[0U] 
             = Vtb_dCacheController__ConstPool__CONST_h9e67c271_0[0U];
-        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_reg = 0U;
-    } else if (((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair) 
-                | (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair))) {
-        vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg 
-            = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0 = 0U;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1 = 0U;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 = 0U;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 = 0U;
+        vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg = 0U;
+    } else if (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing) {
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wmask_reg 
             = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wmask_reg;
-        __Vtemp_4[1U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[1U];
-        __Vtemp_4[2U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[2U];
-        __Vtemp_4[3U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[3U];
-        __Vtemp_4[4U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[4U];
-        __Vtemp_4[5U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[5U];
-        __Vtemp_4[6U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[6U];
-        __Vtemp_4[7U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[7U];
+        __Vtemp_2[1U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[1U];
+        __Vtemp_2[2U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[2U];
+        __Vtemp_2[3U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[3U];
+        __Vtemp_2[4U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[4U];
+        __Vtemp_2[5U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[5U];
+        __Vtemp_2[6U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[6U];
+        __Vtemp_2[7U] = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[7U];
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[0U] 
             = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[0U];
-        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0 
+            = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1 
+            = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
+            = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+            = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1;
+        vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
             = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg;
     } else {
-        vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg 
-            = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr;
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wmask_reg 
             = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wmask;
-        __Vtemp_4[1U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[1U];
-        __Vtemp_4[2U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[2U];
-        __Vtemp_4[3U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[3U];
-        __Vtemp_4[4U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[4U];
-        __Vtemp_4[5U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[5U];
-        __Vtemp_4[6U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[6U];
-        __Vtemp_4[7U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[7U];
+        __Vtemp_2[1U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[1U];
+        __Vtemp_2[2U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[2U];
+        __Vtemp_2[3U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[3U];
+        __Vtemp_2[4U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[4U];
+        __Vtemp_2[5U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[5U];
+        __Vtemp_2[6U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[6U];
+        __Vtemp_2[7U] = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[7U];
         vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[0U] 
             = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.wdata[0U];
-        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1 
+            = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0 
+            = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr_valid;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+            = vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0;
+        __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
+            = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.raddr;
+        vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
             = vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr;
     }
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[1U] 
-        = __Vtemp_4[1U];
+        = __Vtemp_2[1U];
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[2U] 
-        = __Vtemp_4[2U];
+        = __Vtemp_2[2U];
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[3U] 
-        = __Vtemp_4[3U];
+        = __Vtemp_2[3U];
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[4U] 
-        = __Vtemp_4[4U];
+        = __Vtemp_2[4U];
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[5U] 
-        = __Vtemp_4[5U];
+        = __Vtemp_2[5U];
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[6U] 
-        = __Vtemp_4[6U];
+        = __Vtemp_2[6U];
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wdata_reg[7U] 
-        = __Vtemp_4[7U];
-    __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg 
+        = __Vtemp_2[7U];
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg 
         = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__rst))) 
-           && (((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair) 
-                | (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair))
+           && ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing)
                 ? (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg)
                 : (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr_valid)));
-    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair 
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing 
         = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__rst))) 
-           && (1U & ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair)
-                      ? (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved))
-                      : ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg) 
-                         && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata)) 
-                             || ((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata 
-                                              >> 2U)) 
-                                 != (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
-                                     >> 0xfU)))))));
-    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair 
-        = __Vdly__tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair;
-    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg 
-        = __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg;
-    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
-        = __Vdly__tb_dCacheController__DOT__controller_dut__DOT__waddr_reg;
+           && (((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_repair_request) 
+                | (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair)) 
+               || ((1U & (~ (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved))) 
+                   && (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing))));
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0 
+        = __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0;
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1 
+        = __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1;
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0 
+        = __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0;
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+        = __Vdly__tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1;
 }
 
 VL_INLINE_OPT void Vtb_dCacheController___024root___nba_comb__TOP__0(Vtb_dCacheController___024root* vlSelf) {
@@ -578,10 +600,6 @@ VL_INLINE_OPT void Vtb_dCacheController___024root___nba_comb__TOP__0(Vtb_dCacheC
         = ((IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved)
             ? vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr
             : vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg);
-    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable 
-        = (((~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair)) 
-            & (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg)) 
-           | (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved));
 }
 
 VL_INLINE_OPT void Vtb_dCacheController___024root___nba_comb__TOP__1(Vtb_dCacheController___024root* vlSelf) {
@@ -589,10 +607,28 @@ VL_INLINE_OPT void Vtb_dCacheController___024root___nba_comb__TOP__1(Vtb_dCacheC
     Vtb_dCacheController__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    Vtb_dCacheController___024root___nba_comb__TOP__1\n"); );
     // Body
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__read_repair_request 
+        = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing))) 
+           && ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1) 
+               && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata)) 
+                   || ((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata 
+                                    >> 2U)) != (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1 
+                                                >> 0xfU)))));
     vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata_i 
         = ((IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved)
             ? (1U | (0x7fffcU & (vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.waddr 
                                  >> 0xdU))) : (1U | 
                                                (0x7fffeU 
                                                 & vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata)));
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair 
+        = ((1U & (~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__repairing))) 
+           && ((IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg) 
+               && ((1U & (~ vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata)) 
+                   || ((0x1ffffU & (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata 
+                                    >> 2U)) != (vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_reg 
+                                                >> 0xfU)))));
+    vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_enable 
+        = (((~ (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair)) 
+            & (IData)(vlSelf->tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg)) 
+           | (IData)(vlSymsp->TOP__tb_dCacheController__DOT__arbiter_if.repair_resolved));
 }

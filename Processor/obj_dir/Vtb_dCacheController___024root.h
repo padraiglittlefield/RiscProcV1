@@ -20,9 +20,11 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_dCacheController___024root final : public
     // DESIGN SPECIFIC STATE
     CData/*0:0*/ tb_dCacheController__DOT__clk;
     CData/*0:0*/ tb_dCacheController__DOT__rst;
-    CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg;
     CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__waddr_valid_reg;
-    CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__read_miss_repair;
+    CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg0;
+    CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__raddr_valid_reg1;
+    CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__repairing;
+    CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__read_repair_request;
     CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__write_miss_repair;
     CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__write_enable;
     CData/*0:0*/ tb_dCacheController__DOT__controller_dut__DOT__data_store__DOT__csb0_reg;
@@ -48,8 +50,9 @@ class alignas(VL_CACHE_LINE_BYTES) Vtb_dCacheController___024root final : public
     VlWide<8>/*255:0*/ tb_dCacheController__DOT__controller_dut__DOT__rdata_block;
     VlWide<8>/*255:0*/ tb_dCacheController__DOT__controller_dut__DOT__wdata_reg;
     IData/*31:0*/ tb_dCacheController__DOT__controller_dut__DOT__wmask_reg;
-    IData/*31:0*/ tb_dCacheController__DOT__controller_dut__DOT__raddr_reg;
     IData/*31:0*/ tb_dCacheController__DOT__controller_dut__DOT__waddr_reg;
+    IData/*31:0*/ tb_dCacheController__DOT__controller_dut__DOT__raddr_reg0;
+    IData/*31:0*/ tb_dCacheController__DOT__controller_dut__DOT__raddr_reg1;
     IData/*31:0*/ tb_dCacheController__DOT__controller_dut__DOT__waddr_i;
     IData/*18:0*/ tb_dCacheController__DOT__controller_dut__DOT__wblock_metadata_i;
     IData/*18:0*/ tb_dCacheController__DOT__controller_dut__DOT__rblock_metadata;

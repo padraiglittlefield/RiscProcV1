@@ -8,7 +8,14 @@
     input logic address,
     input logic store_hit,  // Store Buffer will be checked in parallel so if we get a store buffer hit we will drop the second stage
     output logic miss_repair,
-    
+    ArbiterControllerIF.Arbiter l1_ctrl_if,
+    ArbiterControllerIF.Arbiter l2_ctrl_if,
+
+    /* IMPROVEMENTS
+        - Need to find a better solution to memory disambugiation. Potentially Use a Memory Dependence Predictor (MDP). 
+            Going to currently stick with in order memory operations 
+
+    */
 
     /* TODO: Interfaces:
         1. MMU for getting the address (MMU will handle memory disambguity and such)
