@@ -1,9 +1,9 @@
 // OpenRAM SRAM model
 // Words: 256
-// Word size: 256
+// Word size: 1024
 // Write size: 8
 
-module sram_0rw1r1w_256_256_freepdk45(
+module sram_0rw1r1w_1024_256_freepdk45(
 `ifdef USE_POWER_PINS
     vdd,
     gnd,
@@ -14,11 +14,11 @@ module sram_0rw1r1w_256_256_freepdk45(
     clk1,csb1,addr1,dout1
   );
 
-  parameter NUM_WMASKS = 32 ;
-  parameter DATA_WIDTH = 256 ;
+  parameter NUM_WMASKS = 128 ;
+  parameter DATA_WIDTH = 1024 ;
   parameter ADDR_WIDTH = 8 ;
   parameter RAM_DEPTH = 1 << ADDR_WIDTH;
-  parameter DELAY = 3 ;
+  parameter DELAY = 2 ;
   parameter VERBOSE = 1 ;
   parameter T_HOLD = 1 ;
 
@@ -61,7 +61,7 @@ module sram_0rw1r1w_256_256_freepdk45(
     addr1_reg = addr1;
     if (!csb0 && !csb1 && (addr0 == addr1))
          $display($time," WARNING: Writing and reading addr0=%b and addr1=%b simultaneously!",addr0,addr1);
-    #(T_HOLD) dout1 = 256'bx;
+    #(T_HOLD) dout1 = 1024'bx;
     if ( !csb1_reg && VERBOSE ) 
       $display($time," Reading %m addr1=%b dout1=%b",addr1_reg,mem[addr1_reg]);
   end

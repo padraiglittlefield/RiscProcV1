@@ -33,13 +33,14 @@ module tb_dCacheController;
     initial begin
         $dumpfile("tb_dCacheController.vcd");
         $dumpvars(0,tb_dCacheController);
+        rst=1'b1;
         @(posedge clk);
         init_signals();
-        rst=0;
         @(posedge clk);
         read_miss_and_repair();
         @(posedge clk);
-        init_signals();
+        read_hit();
+        @(posedge clk);
         #50;
         $finish;
     end
@@ -47,7 +48,7 @@ module tb_dCacheController;
 
     task init_signals();
     begin
-        rst = 1'b1;
+        rst = 1'b0;
         arbiter_if.raddr_valid = '0;
         arbiter_if.raddr = '0;
         arbiter_if.rdata_valid = '0;
@@ -61,7 +62,7 @@ module tb_dCacheController;
 
     task read_miss_and_repair();
     begin
-        logic [255:0] repaired_block;
+        logic [1023:0] repaired_block;
         rst = 1'b0;
         arbiter_if.raddr_valid = 1'b1;
         arbiter_if.raddr = 32'hAABB_CCDD;
@@ -70,7 +71,6 @@ module tb_dCacheController;
         arbiter_if.raddr = '0;
         arbiter_if.rdata_valid = '0;
         @(posedge clk);
-        arbiter_if.raddr_valid = 1'b0;
 
         assert(arbiter_if.read_repair_request == 1'b1) else begin
             $error("Controller did not request a miss repair\n");
@@ -81,21 +81,45 @@ module tb_dCacheController;
         end
 
         repaired_block = {
-            32'h0000_0000,
-            32'h1111_1111,
-            32'h2222_2222,
-            32'h3333_3333,
-            32'h4444_4444,
-            32'h5555_5555,
-            32'h6666_6666,
-            32'h7777_7777
+            32'h0000_0000,32'h1111_1111,32'h2222_2222,32'h3333_3333,32'h4444_4444,32'h5555_5555,32'h6666_6666,32'h7777_7777,
+            32'h0000_0000,32'h1111_1111,32'h2222_2222,32'h3333_3333,32'h4444_4444,32'h5555_5555,32'h6666_6666,32'h7777_7777,
+            32'h0000_0000,32'h1111_1111,32'h2222_2222,32'h3333_3333,32'h4444_4444,32'h5555_5555,32'h6666_6666,32'h7777_7777,
+            32'h0000_0000,32'h1111_1111,32'h2222_2222,32'h3333_3333,32'h4444_4444,32'h5555_5555,32'h6666_6666,32'h7777_7777
         };
 
         arbiter_if.wdata = repaired_block;
         arbiter_if.waddr_valid = 1'b1;
         arbiter_if.waddr = arbiter_if.missed_addr;
         arbiter_if.wmask = '1;
+        arbiter_if.sent_repair = 1'b1;
+
+        @(posedge clk);
+        arbiter_if.sent_repair = 1'b0;
         arbiter_if.repair_resolved = 1'b1;
+        arbiter_if.waddr_valid = 1'b0;
+        @(posedge clk);
+        init_signals();
+    end
+    endtask
+
+    task read_hit();
+    begin
+        logic [1023:0] repaired_block;
+        rst = 1'b0;
+        arbiter_if.raddr_valid = 1'b1;
+        arbiter_if.raddr = 32'hAABB_CCDD;
+        @(posedge clk);
+        arbiter_if.raddr_valid = '0;
+        arbiter_if.raddr = '0;
+        arbiter_if.rdata_valid = '0;
+        @(posedge clk);
+        // assert(arbiter_if.read_repair_request != 1'b1) else begin
+        //     $error("Controller did not request a miss repair\n");
+        // end
+
+        @(posedge clk);
+        init_signals();
+        
     end
     endtask
 
