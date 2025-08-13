@@ -61,7 +61,7 @@ module sram_0rw1r1w_1024_256_freepdk45(
     addr1_reg = addr1;
     if (!csb0 && !csb1 && (addr0 == addr1))
          $display($time," WARNING: Writing and reading addr0=%b and addr1=%b simultaneously!",addr0,addr1);
-    #(T_HOLD) dout1 = 1024'bx;
+    // #(T_HOLD) dout1 = 1024'bx;
     if ( !csb1_reg && VERBOSE ) 
       $display($time," Reading %m addr1=%b dout1=%b",addr1_reg,mem[addr1_reg]);
   end

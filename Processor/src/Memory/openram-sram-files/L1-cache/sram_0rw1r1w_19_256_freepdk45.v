@@ -19,7 +19,7 @@ module sram_0rw1r1w_19_256_freepdk45(
   // FIXME: This delay is arbitrary.
   parameter DELAY = 0 ;
   parameter VERBOSE = 1 ; //Set to 0 to only display warnings
-  parameter T_HOLD = 1 ; //Delay to hold dout value after posedge. Value is arbitrary
+  parameter T_HOLD = 0 ; //Delay to hold dout value after posedge. Value is arbitrary
 
 `ifdef USE_POWER_PINS
     inout vdd;
@@ -61,7 +61,7 @@ module sram_0rw1r1w_19_256_freepdk45(
     addr1_reg = addr1;
     if (!csb0 && !csb1 && (addr0 == addr1))
          $display($time," WARNING: Writing and reading addr0=%b and addr1=%b simultaneously!",addr0,addr1);
-    #(T_HOLD) dout1 = 19'bx;
+    // #(T_HOLD) dout1 = 19'bx;
     if ( !csb1_reg && VERBOSE ) 
       $display($time," Reading %m addr1=%b dout1=%b",addr1_reg,mem[addr1_reg]);
   end
