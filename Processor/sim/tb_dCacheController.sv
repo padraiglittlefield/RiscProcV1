@@ -39,13 +39,14 @@ module tb_dCacheController;
         @(posedge clk);
         read_miss_and_repair();
         @(posedge clk);
-        read_hit();
-        @(posedge clk);
-        write_hit();
         @(posedge clk);
         read_hit();
         @(posedge clk);
-        write_miss();
+        // write_hit();
+        // @(posedge clk);
+        // read_hit();
+        // @(posedge clk);
+        // write_miss();
         #50;
         $finish;
     end
@@ -77,6 +78,10 @@ module tb_dCacheController;
         arbiter_if.rdata_valid = '0;
         @(posedge clk);
         @(posedge clk);
+        @(posedge clk);
+        // @(posedge clk);
+        // @(posedge clk);
+        
         // assert(arbiter_if.read_repair_request == 1'b1) else begin
         //     $error("Controller did not request a miss repair\n");
         // end 
@@ -98,6 +103,7 @@ module tb_dCacheController;
         arbiter_if.wmask = '1;
 
         @(posedge clk);
+        
 
         arbiter_if.repair_resolved = 1'b1;
         arbiter_if.waddr_valid = 1'b0;
@@ -121,8 +127,6 @@ module tb_dCacheController;
         // assert(arbiter_if.read_repair_request != 1'b1) else begin
         //     $error("Controller did not request a miss repair\n");
         // end
-
-        @(posedge clk);
         init_signals();
         @(posedge clk);
     end

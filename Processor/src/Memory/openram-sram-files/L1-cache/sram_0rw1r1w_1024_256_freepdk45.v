@@ -18,9 +18,9 @@ module sram_0rw1r1w_1024_256_freepdk45(
   parameter DATA_WIDTH = 1024 ;
   parameter ADDR_WIDTH = 8 ;
   parameter RAM_DEPTH = 1 << ADDR_WIDTH;
-  parameter DELAY = 2 ;
+  parameter DELAY = 0 ;
   parameter VERBOSE = 1 ;
-  parameter T_HOLD = 1 ;
+  parameter T_HOLD = 0 ;
 
 `ifdef USE_POWER_PINS
     inout vdd;

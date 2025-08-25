@@ -52,7 +52,7 @@ assign repair_resolved = arbiter.repair_resolved; // Indicates that the arbiter 
 
 // Registering vals for tag check/stall
 logic [31:0] raddr_reg0, raddr_reg1,raddr_reg2;
-logic raddr_valid_reg0, raddr_valid_reg1,raddr_valid_reg2;
+logic raddr_valid_reg0, raddr_valid_reg1, raddr_valid_reg2;
 always_ff@(posedge clk) begin
     if (rst) begin
         // reset regs
@@ -67,7 +67,7 @@ always_ff@(posedge clk) begin
         raddr_reg2 <= '0; 
         raddr_valid_reg2 <= '0;
 
-    end else if (repairing & !repair_resolved) begin
+    end else if ((read_repair_request | write_miss_repair | repairing) & !read_repair_request) begin
         
         // maintain curr val
         raddr_reg0 <= raddr_reg0; 
@@ -78,6 +78,7 @@ always_ff@(posedge clk) begin
 
         raddr_reg2 <= raddr_reg2; 
         raddr_valid_reg2 <= raddr_valid_reg2;
+
 
     end else begin
         // update new vals
@@ -114,7 +115,7 @@ always_ff@(posedge clk) begin
         wmask_reg1 <= '0;
 
         
-    end else if (repairing & !repair_resolved) begin
+    end else if ((read_repair_request | write_miss_repair | repairing) & !repair_resolved) begin
         
         // maintain curr vals
         waddr_reg0 <= waddr_reg0;
@@ -149,7 +150,7 @@ always_ff@(posedge clk) begin
     if (rst) begin
         rdata_valid <= 1'b0;
     end else begin
-        rdata_valid <= raddr_valid_reg2 && !read_repair_request;
+        rdata_valid <= raddr_valid_reg1 && !read_repair_request;
     end
 end
 
@@ -158,14 +159,19 @@ logic [127:0] wmask_i;
 logic [31:0] waddr_i;
 logic [1023:0] wdata_i;
 logic [(TAG_BITS+DIRTY+VALID)-1:0] wblock_metadata_i;
+logic [(TAG_BITS+DIRTY+VALID)-1:0] wblock_metadata_o;
 
 
 /* Upon recieving the correct block, the arbiter will attempt to write it to the cache by bypassing the 1-cycle store buffer */
-assign wmask_i = repair_resolved ? wmask : wmask_reg1;
-assign waddr_i = repair_resolved ? waddr : waddr_reg1;
-assign wdata_i = repair_resolved ? wdata : wdata_reg1;
+always_ff @(posedge clk) begin
+    wmask_i <= repair_resolved ? wmask : wmask_reg1;
+    waddr_i <= repair_resolved ? waddr : waddr_reg1;
+    wdata_i <= repair_resolved ? wdata : wdata_reg1;
+    wblock_metadata_i <= repair_resolved ?  {waddr[31:(32-(c-s))-2],1'b0,1'b1} : wblock_metadata_o;
+end
 
-assign wblock_metadata_i = repair_resolved ?  {waddr[31:(32-(c-s))-2],1'b0,1'b1} : {wblock_metadata[(TAG_BITS+DIRTY+VALID)-1:2],1'b1, 1'b1};
+
+assign wblock_metadata_o = waddr_valid_reg1 ?  {wblock_metadata[(TAG_BITS+DIRTY+VALID)-1:2],1'b1, 1'b1} : '0 ;
 
 /* Define SRAM modules for Tag and Data Store. Inputs are registered, so 2 cycle read */
 sram_0rw1r1w_1024_256_freepdk45 data_store (
@@ -175,10 +181,19 @@ sram_0rw1r1w_1024_256_freepdk45 data_store (
     .addr0(waddr_i[(c-s)-1:b]), // Write Port. Delay the data write until we can ensure that the tag is there
     .din0(wdata_i),
     .clk1(clk), 
-    .csb1(~raddr_valid_reg0), // active low chip select
+    .csb1(~raddr_valid_reg0 & ~raddr_valid_reg1), // active low chip select
     .addr1(raddr_reg0[(c-s)-1:b]), // Read Port
     .dout1(rdata_block)
 );
+
+logic read_tag;
+always_ff @(posedge clk) begin
+    read_tag <= (raddr_valid & ~read_repair_request);
+end
+
+
+logic [7:0] read_address;
+assign read_address = raddr[(c-s)-1:b];
 
 
 sram_0rw1r1w_19_256_freepdk45 tag_store0 ( // For checking Read Misses
@@ -187,11 +202,10 @@ sram_0rw1r1w_19_256_freepdk45 tag_store0 ( // For checking Read Misses
     .addr0(waddr_i[(c-s)-1:b]), // Write to tags on block replacement
     .din0(wblock_metadata_i),
     .clk1(clk), 
-    .csb1(~raddr_valid_reg0), // active low chip select
-    .addr1(raddr_reg0[(c-s)-1:b]),
+    .csb1(~raddr_valid_reg0 & ~raddr_valid_reg1), // active low chip select
+    .addr1(raddr_reg0[(c-s)-1:b]), // Read Port
     .dout1(rblock_metadata)
 );
-
 
 sram_0rw1r1w_19_256_freepdk45 tag_store1 ( // For checking Write Misses
     .clk0(clk),
@@ -204,51 +218,45 @@ sram_0rw1r1w_19_256_freepdk45 tag_store1 ( // For checking Write Misses
     .dout1(wblock_metadata)
 );
 
-logic repairing;
-logic next_repairing;
-always_ff@(posedge clk) begin
-    if(rst) begin
-        repairing <= 1'b0;
+logic repairing;   
+logic repairing_next;   
+logic repairing_prev; 
+
+always_ff @(posedge clk) begin
+    if (rst) begin
+        repairing    <= 1'b0;
+        repairing_prev <= 1'b0;
     end else begin
-        repairing <= next_repairing;
+        repairing    <= repairing_next;
+        repairing_prev <= repairing; 
     end
 end
 
 always_comb begin
-    next_repairing = repairing;
+    repairing_next = repairing;
     case (repairing)
-        1'b0: next_repairing = (read_repair_request & raddr_valid_reg2) ? 1'b1: 1'b0;
-        1'b1: next_repairing = repair_resolved ? 1'b0 : 1'b1;
+        1'b0: repairing_next = (read_repair_request | write_miss_repair);
+        1'b1: repairing_next = ~repair_resolved;
     endcase
 end
-
 // Tag Checking
 logic read_repair_request;
 logic [(TAG_BITS + 1 + 1)-1:0] rblock_metadata; // Tag Bits + Dirty + Valid 
 
 // Deconstruct metadata
+
 logic rblock_valid = rblock_metadata[0];
 logic rblock_dirty = rblock_metadata[1];
 logic [(TAG_BITS-1):0] rtag = rblock_metadata[(TAG_BITS + 1 + 1)-1:2];
 
+
+logic read_hit;
 always_comb begin
-    if(!repairing) begin
-        if(raddr_valid_reg2) begin
-            if(!rblock_valid) begin
-                read_repair_request = 1'b1; // Block doesn't exist in cache, we must get it
-            end else begin
-                if(rtag != raddr_reg2[31:(c-s)]) begin
-                    read_repair_request = 1'b1;
-                end else begin
-                    read_repair_request = 1'b0;
-                end
-            end
-        end else begin
-            read_repair_request = 1'b0;
-        end
-    end else begin
-        read_repair_request = 1'b0;
-    end
+    read_hit = (rtag == raddr_reg2[31:(c-s)] & rdata_valid & rblock_valid);
+end
+
+always_ff@(posedge clk) begin
+    read_repair_request <= rdata_valid & ~read_hit;
 end
 
 
@@ -262,22 +270,22 @@ logic wblock_dirty = wblock_metadata[1];
 logic [(TAG_BITS-1):0] wtag = wblock_metadata[(TAG_BITS + DIRTY + VALID)-1:2];
 
 logic write_enable;
-assign write_enable = (waddr_valid_reg1 & ~write_miss_repair) | (repair_resolved); 
+always_ff @(posedge clk) begin
+    write_enable <= (waddr_valid_reg1 & ~write_miss_repair) | (repair_resolved); 
+end
+
 
 always_comb begin
-    if(!repairing & !repair_resolved) begin // If have just repaired or are repairing, do not do a tag check
-        if(waddr_valid_reg1) begin
-            if(!wblock_valid) begin
-                write_miss_repair = 1'b1; // Block doesn't exist in cache, we must get it
-            end else begin
-                if(wtag != waddr_reg1[31:(c-s)]) begin
-                    write_miss_repair = 1'b1;
-                end else begin
-                    write_miss_repair = 1'b0;
-                end
-            end
+ // If have just repaired or are repairing, do not do a tag check
+    if(!repair_resolved & waddr_valid_reg1) begin
+        if(!wblock_valid) begin
+            write_miss_repair = 1'b1; // Block doesn't exist in cache, we must get it
         end else begin
-            write_miss_repair = 1'b0;
+            if(wtag != waddr_reg1[31:(c-s)]) begin
+                write_miss_repair = 1'b1;
+            end else begin
+                write_miss_repair = 1'b0;
+            end
         end
     end else begin
         write_miss_repair = 1'b0;
