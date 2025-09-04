@@ -4,9 +4,14 @@ import CORE_PKG::*;
 
 module tb_dCacheController;
 
+    // For debugging
+    localparam DEBUG = 0;
+    localparam ASSERTION = ~DEBUG;
+
     // Generate the clock
     localparam CLK_PERIOD = 1;
     localparam DUTY_CYCLE = 0.5;
+
 
     logic clk;
 
@@ -78,14 +83,15 @@ module tb_dCacheController;
         arbiter_if.rdata_valid = '0;
         @(posedge clk);
         @(posedge clk);
-        @(posedge clk);
         
-        assert(arbiter_if.read_repair_request == 1'b1) else begin
-            $error("Controller did not request a miss repair\n");
-        end 
-        
-        assert(arbiter_if.missed_addr == 32'hAABB_CCDD) else begin
-            $error("Controller did not send correct missed address\n");
+        if (ASSERTION) begin
+            assert(arbiter_if.read_repair_request == 1'b1) else begin
+                $error("Controller did not request a miss repair\n");
+            end 
+            
+            assert(arbiter_if.missed_addr == 32'hAABB_CCDD) else begin
+                $error("Controller did not send correct missed address\n");
+            end
         end
 
         repaired_block = {
@@ -122,9 +128,11 @@ module tb_dCacheController;
         arbiter_if.raddr = '0;
         arbiter_if.rdata_valid = '0;
         @(posedge clk);
-        // assert(arbiter_if.read_repair_request != 1'b1) else begin
-        //     $error("Controller did not request a miss repair\n");
-        // end
+        if (ASSERTION) begin
+            assert(arbiter_if.read_repair_request != 1'b1) else begin
+                $error("Controller did not request a miss repair\n");
+            end
+        end
         init_signals();
         @(posedge clk);
     end
@@ -171,7 +179,7 @@ module tb_dCacheController;
     endtask
 //  assert(pht_tb[3] === RESET_VALUE) else begin
 //                 $error("\npht counter %0d violated!\
-//                 \n[%3d]\tASSERTION FAILED:\tACTUAL: 2'b%2b\tEXPECTED: 2'b%2b", 3, iteration, pht_tb[3], RESET_VALUE);
+//                 \n[%3d]\tDEBUG FAILED:\tACTUAL: 2'b%2b\tEXPECTED: 2'b%2b", 3, iteration, pht_tb[3], RESET_VALUE);
 //             end
 
 endmodule

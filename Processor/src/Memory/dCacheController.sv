@@ -144,7 +144,7 @@ end
 
 
 logic rdata_valid;
-assign arbiter.rdata_valid = rdata_valid;
+assign arbiter.rdata_valid = read_hit;
 
 always_ff@(posedge clk) begin
     if (rst) begin
@@ -159,7 +159,7 @@ always_ff@(posedge clk) begin
     if(rst) begin
         missed_addr <= '0;
     end else begin
-        missed_addr <= raddr_reg2;
+        missed_addr <= raddr_reg1;
     end
 end
 
@@ -269,8 +269,8 @@ always_comb begin
 end
 
 
-always_ff@(posedge clk) begin
-    read_repair_request <= rdata_valid & ~read_hit;
+always_comb begin
+    read_repair_request = rdata_valid & ~read_hit;
 end
 
 
