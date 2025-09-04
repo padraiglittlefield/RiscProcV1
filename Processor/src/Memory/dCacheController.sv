@@ -46,7 +46,7 @@ logic repair_resolved;
 
 assign arbiter.read_repair_request = read_repair_request;
 assign arbiter.write_miss_repair = write_miss_repair;
-assign arbiter.missed_addr = raddr_reg2;
+assign arbiter.missed_addr = missed_addr; // Note: Upon
 assign repair_resolved = arbiter.repair_resolved; // Indicates that the arbiter has supplied the missed block.
 // Write Requests to Arbiter on eviction of dirty block
 
@@ -154,6 +154,14 @@ always_ff@(posedge clk) begin
     end
 end
 
+logic [31:0] missed_addr;
+always_ff@(posedge clk) begin
+    if(rst) begin
+        missed_addr <= '0;
+    end else begin
+        missed_addr <= raddr_reg2;
+    end
+end
 
 logic [127:0] wmask_i;
 logic [31:0] waddr_i;
