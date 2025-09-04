@@ -199,6 +199,11 @@ always_ff @(posedge clk) begin
     read_tag <= (raddr_valid & ~read_repair_request);
 end
 
+logic [18:0] rblock_metadata_r;
+always_ff@(posedge clk) begin
+    rblock_metadata_r <= rblock_metadata;
+end
+
 
 logic [7:0] read_address;
 assign read_address = raddr[(c-s)-1:b];
@@ -253,15 +258,16 @@ logic [(TAG_BITS + 1 + 1)-1:0] rblock_metadata; // Tag Bits + Dirty + Valid
 
 // Deconstruct metadata
 
-logic rblock_valid = rblock_metadata[0];
-logic rblock_dirty = rblock_metadata[1];
-logic [(TAG_BITS-1):0] rtag = rblock_metadata[(TAG_BITS + 1 + 1)-1:2];
+logic rblock_valid = rblock_metadata_r[0];
+logic rblock_dirty = rblock_metadata_r[1];
+logic [(TAG_BITS-1):0] rtag = rblock_metadata_r[(TAG_BITS + 1 + 1)-1:2];
 
 
 logic read_hit;
 always_comb begin
     read_hit = (rtag == raddr_reg2[31:(c-s)] & rdata_valid & rblock_valid);
 end
+
 
 always_ff@(posedge clk) begin
     read_repair_request <= rdata_valid & ~read_hit;
