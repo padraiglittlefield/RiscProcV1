@@ -24,6 +24,8 @@
     */
 );
 
+//TODO: Whose responsibility is it to shift over the value to match the mask?
+
 // TODO: 2-Entry Victim Cache (Register Backed) with a flip-flop LRU policy ici
 /*  TODO: I really need to abstract the arbiter and then in a seperate file, instantiate an arbiter for L1 (Inst and Data), 
         Victim Cache, and L2. Therefore, the arbiter needs be smaller in scope. Need to figure out how to remedy this
