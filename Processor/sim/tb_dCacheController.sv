@@ -47,11 +47,11 @@ module tb_dCacheController;
         @(posedge clk);
         read_hit();
         @(posedge clk);
-        // write_hit();
-        // @(posedge clk);
-        // read_hit();
-        // @(posedge clk);
-        // write_miss();
+        write_hit();
+        @(posedge clk);
+        read_hit();
+        @(posedge clk);
+        write_miss();
         #50;
         $finish;
     end
@@ -155,6 +155,12 @@ module tb_dCacheController;
         @(posedge clk);
         init_signals();
         @(posedge clk);
+        if (ASSERTION) begin
+            assert(arbiter_if.write_repair_request != 1'b1) else begin
+                $error("Controller request a miss repair for a hit!\n");
+            end
+        end
+        
     end
     endtask
 
@@ -170,11 +176,21 @@ module tb_dCacheController;
 
         arbiter_if.wdata = new_block;
         arbiter_if.waddr_valid = 1'b1;
-        arbiter_if.waddr = 32'h0000_0000;
+        arbiter_if.waddr = 32'h0000_0001;
         arbiter_if.wmask = '1;
         @(posedge clk);
-        arbiter_if.waddr_valid = 1'b0;
+        arbiter_if.waddr_valid = '0;
+        arbiter_if.wdata = '0;
+        arbiter_if.waddr_valid = '0;
+        arbiter_if.waddr = '0;
+        arbiter_if.wmask = '0;
         @(posedge clk);
+        @(posedge clk);
+        if (ASSERTION) begin
+            assert(arbiter_if.write_repair_request == 1'b1) else begin
+                $error("Controller did not request a miss repair for a miss!\n");
+            end
+        end
     end
     endtask
 //  assert(pht_tb[3] === RESET_VALUE) else begin

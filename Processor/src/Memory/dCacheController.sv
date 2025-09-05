@@ -45,7 +45,7 @@ assign wdata = arbiter.wdata; //TODO: Whose responsibility is it to shift over t
 logic repair_resolved;
 
 assign arbiter.read_repair_request = read_repair_request;
-assign arbiter.write_miss_repair = write_miss_repair;
+assign arbiter.write_repair_request = write_repair_request;
 assign arbiter.missed_addr = missed_addr; // Note: Upon
 assign repair_resolved = arbiter.repair_resolved; // Indicates that the arbiter has supplied the missed block.
 // Write Requests to Arbiter on eviction of dirty block
@@ -67,7 +67,7 @@ always_ff@(posedge clk) begin
         raddr_reg2 <= '0; 
         raddr_valid_reg2 <= '0;
 
-    end else if ((read_repair_request | write_miss_repair | repairing) & !read_repair_request) begin
+    end else if ((read_repair_request | write_repair_request | repairing) & !read_repair_request) begin
         
         // maintain curr val
         raddr_reg0 <= raddr_reg0; 
@@ -115,7 +115,7 @@ always_ff@(posedge clk) begin
         wmask_reg1 <= '0;
 
         
-    end else if ((read_repair_request | write_miss_repair | repairing) & !repair_resolved) begin
+    end else if ((read_repair_request | write_repair_request | repairing) & !repair_resolved) begin
         
         // maintain curr vals
         waddr_reg0 <= waddr_reg0;
@@ -248,7 +248,7 @@ end
 always_comb begin
     repairing_next = repairing;
     case (repairing)
-        1'b0: repairing_next = (read_repair_request | write_miss_repair);
+        1'b0: repairing_next = (read_repair_request | write_repair_request);
         1'b1: repairing_next = ~repair_resolved;
     endcase
 end
@@ -268,41 +268,43 @@ always_comb begin
     read_hit = (rtag == raddr_reg2[31:(c-s)] & rdata_valid & rblock_valid);
 end
 
-
 always_comb begin
     read_repair_request = rdata_valid & ~read_hit;
 end
 
-
 // Tag Checking
-logic write_miss_repair;
-logic [(TAG_BITS + DIRTY + VALID)-1:0] wblock_metadata; // Tag Bits + Dirty + Valid 
-
-// Deconstruct metadata
-logic wblock_valid = wblock_metadata[0];
-logic wblock_dirty = wblock_metadata[1];
-logic [(TAG_BITS-1):0] wtag = wblock_metadata[(TAG_BITS + DIRTY + VALID)-1:2];
-
-logic write_enable;
-always_ff @(posedge clk) begin
-    write_enable <= (waddr_valid_reg1 & ~write_miss_repair) | (repair_resolved); 
+logic [(TAG_BITS + DIRTY + VALID)-1:0] wblock_metadata, wblock_metadata_r; // Tag Bits + Dirty + Valid 
+always_ff@(posedge clk) begin
+    wblock_metadata_r <= wblock_metadata;
 end
 
 
+// Deconstruct metadata
+logic wblock_valid = wblock_metadata_r[0];
+logic wblock_dirty = wblock_metadata_r[1];
+logic [(TAG_BITS-1):0] wtag = wblock_metadata_r[(TAG_BITS + DIRTY + VALID)-1:2];
+
+logic write_enable;
+always_ff @(posedge clk) begin
+    write_enable <= (waddr_valid_reg1 & ~write_repair_request) | (repair_resolved); 
+end
+
+logic write_hit;
 always_comb begin
- // If have just repaired or are repairing, do not do a tag check
-    if(!repair_resolved & waddr_valid_reg1) begin
-        if(!wblock_valid) begin
-            write_miss_repair = 1'b1; // Block doesn't exist in cache, we must get it
-        end else begin
-            if(wtag != waddr_reg1[31:(c-s)]) begin
-                write_miss_repair = 1'b1;
-            end else begin
-                write_miss_repair = 1'b0;
-            end
-        end
+    write_hit = (wtag != waddr_reg1[31:(c-s)] & wdata_valid & wblock_valid );
+end
+
+logic write_repair_request;
+always_comb begin
+    write_repair_request = wdata_valid & ~write_hit & ~repair_resolved; //No need to perform a tag check when repairing a missed read
+end
+
+logic wdata_valid;
+always_ff@(posedge clk) begin
+    if (rst) begin
+        wdata_valid <= 1'b0;
     end else begin
-        write_miss_repair = 1'b0;
+        wdata_valid <= waddr_valid_reg1 && !read_repair_request;
     end
 end
 
