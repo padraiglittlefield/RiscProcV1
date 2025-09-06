@@ -92,7 +92,7 @@ module tb_dCacheController;
                 $error("Controller did not request a miss repair\n");
             end 
             
-            assert(arbiter_if.missed_addr == 32'hAABB_CCDD) else begin
+            assert(arbiter_if.missed_raddr == 32'hAABB_CCDD) else begin
                 $error("Controller did not send correct missed address\n");
             end
         end
@@ -104,7 +104,7 @@ module tb_dCacheController;
             32'h0000_0000,32'h1111_1111,32'h2222_2222,32'h3333_3333,32'h4444_4444,32'h5555_5555,32'h6666_6666,32'h7777_7777
         };
 
-        arbiter_if.waddr = arbiter_if.missed_addr;
+        arbiter_if.waddr = arbiter_if.missed_raddr;
         arbiter_if.wdata = repaired_block;
         arbiter_if.waddr_valid = 1'b1;
         arbiter_if.wmask = '1;
@@ -188,6 +188,7 @@ module tb_dCacheController;
     begin
         arbiter_if.raddr_valid = 1'b1;
         arbiter_if.raddr = 32'hAABB_CCDD;
+        arbiter_if.waddr = 32'hEEEE_FFFF;
         @(posedge clk);
         init_signals();
         @(posedge clk);
@@ -198,7 +199,7 @@ module tb_dCacheController;
                 $error("Controller did not request a miss repair\n");
             end 
             
-            assert(arbiter_if.missed_addr == 32'hAABB_CCDD) else begin
+            assert(arbiter_if.missed_raddr == 32'hAABB_CCDD) else begin
                 $error("Controller did not send correct missed address\n");
             end
         end
@@ -240,7 +241,7 @@ module tb_dCacheController;
                 $error("Controller did not request a miss repair\n");
             end 
             
-            assert(arbiter_if.missed_addr == 32'hAABB_CCDD) else begin
+            assert(arbiter_if.missed_raddr == 32'hAABB_CCDD) else begin
                 $error("Controller did not send correct missed address\n");
             end
         end
@@ -291,7 +292,7 @@ module tb_dCacheController;
         //     32'h0000_0000,32'h1111_1111,32'h2222_2222,32'h3333_3333,32'h4444_4444,32'h5555_5555,32'h6666_6666,32'h7777_7777
         // };
 
-        // arbiter_if.waddr = arbiter_if.missed_addr;
+        // arbiter_if.waddr = arbiter_if.missed_waddr;
         // arbiter_if.wdata = repaired_block;
         // arbiter_if.waddr_valid = 1'b1;
         // arbiter_if.wmask = '1;
@@ -339,7 +340,7 @@ module tb_dCacheController;
                 $error("Controller did not request a miss repair\n");
             end 
             
-            assert(arbiter_if.missed_addr == 32'hAABB_CCDD) else begin
+            assert(arbiter_if.missed_raddr == 32'hAABB_CCDD) else begin
                 $error("Controller did not send correct missed address\n");
             end
         end
@@ -357,7 +358,7 @@ module tb_dCacheController;
             32'h0000_0000,32'h1111_1111,32'h2222_2222,32'h3333_3333,32'h4444_4444,32'h5555_5555,32'h6666_6666,32'h7777_7777
         };
 
-        arbiter_if.waddr = arbiter_if.missed_addr;
+        arbiter_if.waddr = arbiter_if.missed_raddr;
         arbiter_if.wdata = repaired_block;
         arbiter_if.waddr_valid = 1'b1;
         arbiter_if.wmask = '1;

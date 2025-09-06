@@ -45,10 +45,10 @@ assign wdata = arbiter.wdata;
 logic repair_resolved;
 
 
-assign arbiter.missed_addr = missed_addr;                 // Note: Upon
+assign arbiter.missed_raddr = missed_raddr;                 // Note: Upon
 assign arbiter.read_repair_request = read_repair_request;
 assign repair_resolved = arbiter.repair_resolved;           // Indicates that the arbiter has supplied the missed block.
-// assign arbiter.missed_waddr = missed_waddr; // Note: Upon
+assign arbiter.missed_waddr = missed_waddr; 
 assign arbiter.write_repair_request = write_repair_request;
 
 // Write Requests to Arbiter on eviction of dirty block
@@ -157,14 +157,25 @@ always_ff@(posedge clk) begin
     end
 end
 
-logic [31:0] missed_addr;
+logic [31:0] missed_raddr;
 always_ff@(posedge clk) begin
     if(rst) begin
-        missed_addr <= '0;
+        missed_raddr <= '0;
     end else begin
-        missed_addr <=  raddr_reg1; // TODO: Properly multiplex this with write misses
+        missed_raddr <= raddr_reg1;
     end
 end
+
+
+logic [31:0] missed_waddr;
+always_ff@(posedge clk) begin
+    if(rst) begin
+        missed_waddr <= '0;
+    end else begin
+        missed_waddr <= waddr_reg1;
+    end
+end
+
 
 logic [127:0] wmask_i;
 logic [31:0] waddr_i;
