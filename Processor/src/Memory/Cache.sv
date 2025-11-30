@@ -52,7 +52,7 @@ module Cache #()(
 
 
 /* +++++ L2 Cache +++++ 
-        1. Configa
+        1. Config
                 c:
                 b:
                 s:
