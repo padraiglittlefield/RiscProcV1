@@ -1,45 +1,111 @@
-mod ?= idu
-path ?= src/
-extras ?=
+# Verilator Makefile for SystemVerilog simulation
 
-.DEFAULT_GOAL := test
+# Directories
+SRC_DIR := src
+SIM_DIR := sim
+INC_DIR := include
+BUILD_DIR := obj_dir
 
-.PHONY: test
-test:
-	rm -rf .stamp.* ./obj_dir
-	make verilate mod=$(mod) path=$(path) extras="$(extras)"
-	make build mod=$(mod) path=$(path)
+# Tools
+VERILATOR := verilator
+VERILATOR_FLAGS := --binary --trace --timing -Wall -Wno-fatal
+VERILATOR_FLAGS += -I$(INC_DIR)
+VERILATOR_FLAGS += --top-module tb_$(target)
 
-.PHONY: make_view
-make_view:
-	rm -rf .stamp.* ./obj_dir
-	make verilate mod=$(mod) path=$(path) extras="$(extras)"
-	make build mod=$(mod) path=$(path)
-	make waves mod=$(mod) path=$(path)
+# Find all source files
+VERILOG_SOURCES := $(shell find $(SRC_DIR) -name "*.sv")
+INCLUDE_FILES := $(shell find $(INC_DIR) -name "*.sv" -o -name "*.svh")
 
-.PHONY: verilate
-verilate: .stamp.verilate
+# GTKWave for viewing waveforms
+GTKWAVE := gtkwave
 
-.PHONY: build
-build: .stamp.build
+.PHONY: all clean view help
 
-.PHONY: waves
-waves: .stamp.waves
+# Default target
+all:
+	@echo "Usage: make view target=<MODULE_NAME>"
+	@echo "Example: make view target=dispatch"
+	@echo ""
+	@echo "This will:"
+	@echo "  1. Compile tb_<MODULE_NAME>.sv from sim/ with <MODULE_NAME>.sv from src/"
+	@echo "  2. Run the simulation"
+	@echo "  3. Open the waveform in GTKWave"
 
-.stamp.verilate:
-	verilator --binary --trace --timing --exe --build --sv --assert -Iinclude \
-		include/core_pkg.svh \
-		sim/tb_$(mod).sv $(path)$(mod).sv $(extras) --top-module tb_$(mod)
-	@touch .stamp.verilate
+# Main view target
+view: check_target compile run waveform
 
-.stamp.build: obj_dir/Vtb_$(mod)
-	obj_dir/Vtb_$(mod)
-	@touch .stamp.build
+# Check if target is specified
+check_target:
+ifndef target
+	$(error target is not set. Usage: make view target=<MODULE_NAME>)
+endif
+	@echo "Building testbench for module: $(target)"
 
-.stamp.waves: tb_$(mod).vcd
-	gtkwave tb_$(mod).vcd
-	@touch .stamp.waves
+# Compile with Verilator
+compile:
+	@echo "=== Compiling with Verilator ==="
+	@if [ ! -f "$(SIM_DIR)/tb_$(target).sv" ]; then \
+		echo "Error: Testbench $(SIM_DIR)/tb_$(target).sv not found!"; \
+		exit 1; \
+	fi
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+		$(INCLUDE_FILES) \
+		$(SIM_DIR)/tb_$(target).sv \
+		$(VERILOG_SOURCES) \
+		-j 0
 
-.PHONY: clean
+# Run simulation
+run:
+	@echo "=== Running simulation ==="
+	@if [ -f "$(BUILD_DIR)/Vtb_$(target)" ]; then \
+		$(BUILD_DIR)/Vtb_$(target); \
+	else \
+		echo "Error: Compiled binary not found!"; \
+		exit 1; \
+	fi
+
+# Open waveform in GTKWave
+waveform:
+	@echo "=== Opening waveform viewer ==="
+	@if [ -f "$(BUILD_DIR)/tb_$(target).vcd" ]; then \
+		$(GTKWAVE) $(BUILD_DIR)/tb_$(target).vcd & \
+	elif [ -f "tb_$(target).vcd" ]; then \
+		$(GTKWAVE) tb_$(target).vcd & \
+	else \
+		echo "Warning: No VCD file found. Make sure your testbench generates a tb_$(target).vcd file."; \
+	fi
+
+# Compile only (no run)
+compile-only: check_target compile
+
+# Run only (assumes already compiled)
+run-only: check_target run
+
+# Build only (does reopen gtkwave)
+
+build: check_target compile run
+
+# Clean build artifacts
 clean:
-	rm -rf .stamp.* ./obj_dir *.vcd test_results.log
+	@echo "=== Cleaning build artifacts ==="
+	rm -rf $(BUILD_DIR)
+	rm -f *.vcd
+	rm -f *.log
+
+# Help target
+help:
+	@echo "Verilator Makefile Targets:"
+	@echo "  make view target=<MODULE>   - Compile, run, and view waveform"
+	@echo "  make compile-only target=<MODULE> - Only compile"
+	@echo "  make run-only target=<MODULE>     - Only run (if already compiled)"
+	@echo "  make clean                   - Remove build artifacts"
+	@echo ""
+	@echo "Example:"
+	@echo "  make view target=dispatch"
+	@echo ""
+	@echo "Notes:"
+	@echo "  - Testbench must be named tb_<MODULE>.sv in sim/"
+	@echo "  - Module source should be <MODULE>.sv somewhere in src/"
+	@echo "  - All .sv files in src/ tree are included automatically"
+	@echo "  - All .sv/.svh files in include/ are compiled first"
+	@echo "  - Include files from include/ are added to search path"
