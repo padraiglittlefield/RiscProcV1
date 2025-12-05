@@ -283,7 +283,7 @@ module tb_wakeup;
     task test_grant_retire_multiple();
         begin
             $display("\n[Test 9] Grant and retire multiple entries to free space");
-            for (int i = 0; i < 3; i++) begin
+            for (int i = 0; i < (RS_ENTRIES/2); i++) begin
                 if (reqs != 0) begin
                     grant_entry();
                     retire_entry_task(grant);

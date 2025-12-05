@@ -1,3 +1,10 @@
+/*
+    Wakeup Module for Scheduler
+        - By; Padraig Littlefield
+            12/4/25
+    Tracks dependencies using a Dependency Bit Matrix, similar to what is outlined by the RSD OoO Soft-Core Processor.
+
+*/
 module wakeup (
     input logic clk,
     input logic rst,
@@ -32,7 +39,7 @@ always_ff @( posedge clk ) begin
             entry_valid[i] <= 1'b0;
             entry_granted[i] <= 1'b0;
             for(int j =0; j < RS_ENTRIES * NUM_FUS; j++) begin
-                dependency_matrix_row[i][j] <= 0;
+                dependency_matrix_row[i][j] = 0;
             end
         end 
     end else begin

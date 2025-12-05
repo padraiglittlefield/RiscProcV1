@@ -5,9 +5,24 @@
 
 package CORE_PKG;
 
-parameter RS_ENTRIES = 2;
+parameter NUM_PREGS = 64;
+parameter NUM_AREGS = 32;
 
-parameter NUM_FUS = 2;
+parameter RS_ENTRIES = 32;
+parameter NUM_FUS = 4;
+
+typedef struct packed {
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg,  
+    logic[$clog2(NUM_PREGS)-1:0] src1_preg,
+    logic[$clog2(NUM_PREGS)-1:0] src2_preg,
+    logic [31:0] imm_val,
+    logic instr_valid,
+    ex_pipe ex_pipe_dst,
+    logic [31:0] pc,
+    logic [$clog2(NUM_AREGS)-1:0] dst_areg,
+    logic src1_dp_en,
+    logic src2_dp_en
+} disp_packet_t;
 
 endpackage
 `endif
