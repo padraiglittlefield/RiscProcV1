@@ -24,19 +24,9 @@ module tb_example;
     integer fail_count = 0;
     
     // Instantiate DUT
-    wakeup dut (
+    example dut (
         .clk(clk),
-        .rst(rst),
-        .disp_valid(disp_valid),
-        .dependency_mask(dependency_mask),
-        .free_entry_out(free_entry_out),
-        .full_out(full_out),
-        .reqs(reqs),
-        .grant(grant),
-        .grant_valid(grant_valid),
-        .ready_mask(ready_mask),
-        .retire_entry(retire_entry),
-        .retire_valid(retire_valid)
+        .rst(rst)
     );
     
     // Clock generation
@@ -50,8 +40,8 @@ module tb_example;
     
     // Waveform dump
     initial begin
-        $dumpfile("tb_wakeup.vcd");
-        $dumpvars(0, tb_wakeup);
+        $dumpfile("tb_EXAMPLE.vcd");
+        $dumpvars(0, tb_EXAMPLE);
     end
     
     // Task: Initialize signals

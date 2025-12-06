@@ -12,16 +12,12 @@ parameter RS_ENTRIES = 32;
 parameter NUM_FUS = 4;
 
 typedef struct packed {
-    logic [$clog2(NUM_PREGS)-1:0] dst_preg,  
-    logic[$clog2(NUM_PREGS)-1:0] src1_preg,
-    logic[$clog2(NUM_PREGS)-1:0] src2_preg,
-    logic [31:0] imm_val,
-    logic instr_valid,
-    ex_pipe ex_pipe_dst,
-    logic [31:0] pc,
-    logic [$clog2(NUM_AREGS)-1:0] dst_areg,
-    logic src1_dp_en,
-    logic src2_dp_en
+    logic [$clog2(NUM_PREGS)-1:0] dst_preg;
+    logic [$clog2(NUM_PREGS)-1:0] src1_preg;
+    logic [$clog2(NUM_PREGS)-1:0] src2_preg;
+    logic [31:0] imm_val;
+    logic instr_valid;
+    logic [31:0] pc;
 } disp_packet_t;
 
 endpackage

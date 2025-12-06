@@ -1,7 +1,9 @@
 `timescale 1ns / 1ns
 import CORE_PKG::*;
 
-
+/*
+    Template for my personal testbenches, with clock and check_assert
+*/
 module tb_scheduler;
     localparam CLK_PERIOD = 20;
     localparam DUTY_CYCLE = 0.5;
@@ -12,29 +14,25 @@ module tb_scheduler;
     
     // DUT signals
     
-    /*
-        Define DUT signals here
-
-    */
+    logic [RS_ENTRIES-1:0] local_ready_mask;
+    logic [(RS_ENTRIES * NUM_FUS)-1:0] global_ready_mask;
+    dispatch_scheduler_if disp_if();
+    execute_scheduler_if exec_if();
+    scheduler_reg_read_if reg_read_if();
     
     // Test tracking
     integer pass_count = 0;
     integer fail_count = 0;
     
     // Instantiate DUT
-    wakeup dut (
+    scheduler dut (
         .clk(clk),
         .rst(rst),
-        .disp_valid(disp_valid),
-        .dependency_mask(dependency_mask),
-        .free_entry_out(free_entry_out),
-        .full_out(full_out),
-        .reqs(reqs),
-        .grant(grant),
-        .grant_valid(grant_valid),
-        .ready_mask(ready_mask),
-        .retire_entry(retire_entry),
-        .retire_valid(retire_valid)
+        .local_ready_mask(local_ready_mask),
+        .global_ready_mask(global_ready_mask),
+        .disp_if(disp_if),
+        .exec_if(exec_if),
+        .reg_read_if(reg_read_if)
     );
     
     // Clock generation
@@ -48,8 +46,8 @@ module tb_scheduler;
     
     // Waveform dump
     initial begin
-        $dumpfile("tb_wakeup.vcd");
-        $dumpvars(0, tb_wakeup);
+        $dumpfile("tb_scheduler.vcd");
+        $dumpvars(0, tb_scheduler);
     end
     
     // Task: Initialize signals
